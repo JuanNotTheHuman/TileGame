@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC12261A-B735-459B-81AA-DA7A0D3CD6DD}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>TileGame</RootNamespace>
+    <AssemblyName>TileGame</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Helpers\EnumToImagePathConverter.cs" />
+    <Compile Include="Helpers\ItemEnumToImagePathConverter.cs" />
+    <Compile Include="Helpers\ObservableDictionary.cs" />
+    <Compile Include="Helpers\RelayCommand.cs" />
+    <Compile Include="Helpers\WeightedRandom.cs" />
+    <Compile Include="Models\Config.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="ViewModels\BoardViewModel.cs" />
+    <Compile Include="ViewModels\GameViewModel.cs" />
+    <Compile Include="ViewModels\InventoryViewModel.cs" />
+    <Compile Include="ViewModels\ItemViewModel.cs" />
+    <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\TileViewModel.cs" />
+    <Compile Include="Views\GameView.xaml.cs">
+      <DependentUpon>GameView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\GameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Board.cs" />
+    <Compile Include="Models\Tile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Enums.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Helpers\TileViewModelPositionComparer.cs" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\GrassB.png" />
+    <Resource Include="Images\GrassC.png" />
+    <Resource Include="Images\tile_0003.png" />
+    <Resource Include="Images\tile_0004.png" />
+    <Resource Include="Images\Bush.png" />
+    <Resource Include="Images\tile_0006.png" />
+    <Resource Include="Images\tile_0007.png" />
+    <Resource Include="Images\tile_0008.png" />
+    <Resource Include="Images\tile_0009.png" />
+    <Resource Include="Images\tile_0010.png" />
+    <Resource Include="Images\tile_0011.png" />
+    <Resource Include="Images\tile_0012.png" />
+    <Resource Include="Images\tile_0013.png" />
+    <Resource Include="Images\tile_0014.png" />
+    <Resource Include="Images\tile_0015.png" />
+    <Resource Include="Images\tile_0016.png" />
+    <Resource Include="Images\tile_0017.png" />
+    <Resource Include="Images\tile_0018.png" />
+    <Resource Include="Images\tile_0019.png" />
+    <Resource Include="Images\tile_0020.png" />
+    <Resource Include="Images\tile_0021.png" />
+    <Resource Include="Images\tile_0022.png" />
+    <Resource Include="Images\tile_0023.png" />
+    <Resource Include="Images\tile_0024.png" />
+    <Resource Include="Images\tile_0025.png" />
+    <Resource Include="Images\tile_0026.png" />
+    <Resource Include="Images\tile_0027.png" />
+    <Resource Include="Images\tile_0028.png" />
+    <Resource Include="Images\tile_0029.png" />
+    <Resource Include="Images\tile_0030.png" />
+    <Resource Include="Images\tile_0031.png" />
+    <Resource Include="Images\tile_0032.png" />
+    <Resource Include="Images\tile_0033.png" />
+    <Resource Include="Images\tile_0034.png" />
+    <Resource Include="Images\tile_0035.png" />
+    <Resource Include="Images\tile_0036.png" />
+    <Resource Include="Images\tile_0037.png" />
+    <Resource Include="Images\tile_0038.png" />
+    <Resource Include="Images\tile_0039.png" />
+    <Resource Include="Images\tile_0040.png" />
+    <Resource Include="Images\tile_0041.png" />
+    <Resource Include="Images\tile_0042.png" />
+    <Resource Include="Images\tile_0043.png" />
+    <Resource Include="Images\tile_0044.png" />
+    <Resource Include="Images\tile_0045.png" />
+    <Resource Include="Images\tile_0046.png" />
+    <Resource Include="Images\tile_0047.png" />
+    <Resource Include="Images\tile_0048.png" />
+    <Resource Include="Images\tile_0049.png" />
+    <Resource Include="Images\tile_0050.png" />
+    <Resource Include="Images\tile_0051.png" />
+    <Resource Include="Images\tile_0052.png" />
+    <Resource Include="Images\tile_0053.png" />
+    <Resource Include="Images\tile_0054.png" />
+    <Resource Include="Images\tile_0055.png" />
+    <Resource Include="Images\tile_0056.png" />
+    <Resource Include="Images\tile_0057.png" />
+    <Resource Include="Images\tile_0058.png" />
+    <Resource Include="Images\tile_0059.png" />
+    <Resource Include="Images\tile_0060.png" />
+    <Resource Include="Images\tile_0061.png" />
+    <Resource Include="Images\tile_0062.png" />
+    <Resource Include="Images\tile_0063.png" />
+    <Resource Include="Images\tile_0064.png" />
+    <Resource Include="Images\tile_0065.png" />
+    <Resource Include="Images\tile_0066.png" />
+    <Resource Include="Images\tile_0067.png" />
+    <Resource Include="Images\tile_0068.png" />
+    <Resource Include="Images\tile_0069.png" />
+    <Resource Include="Images\tile_0070.png" />
+    <Resource Include="Images\tile_0071.png" />
+    <Resource Include="Images\tile_0072.png" />
+    <Resource Include="Images\tile_0073.png" />
+    <Resource Include="Images\tile_0074.png" />
+    <Resource Include="Images\tile_0075.png" />
+    <Resource Include="Images\tile_0076.png" />
+    <Resource Include="Images\tile_0077.png" />
+    <Resource Include="Images\tile_0078.png" />
+    <Resource Include="Images\tile_0079.png" />
+    <Resource Include="Images\tile_0080.png" />
+    <Resource Include="Images\tile_0081.png" />
+    <Resource Include="Images\tile_0082.png" />
+    <Resource Include="Images\tile_0083.png" />
+    <Resource Include="Images\tile_0084.png" />
+    <Resource Include="Images\tile_0085.png" />
+    <Resource Include="Images\tile_0086.png" />
+    <Resource Include="Images\tile_0087.png" />
+    <Resource Include="Images\tile_0088.png" />
+    <Resource Include="Images\tile_0089.png" />
+    <Resource Include="Images\tile_0090.png" />
+    <Resource Include="Images\tile_0091.png" />
+    <Resource Include="Images\tile_0092.png" />
+    <Resource Include="Images\Coin.png" />
+    <Resource Include="Images\tile_0094.png" />
+    <Resource Include="Images\tile_0095.png" />
+    <Resource Include="Images\tile_0096.png" />
+    <Resource Include="Images\tile_0097.png" />
+    <Resource Include="Images\tile_0098.png" />
+    <Resource Include="Images\tile_0099.png" />
+    <Resource Include="Images\tile_0100.png" />
+    <Resource Include="Images\tile_0101.png" />
+    <Resource Include="Images\tile_0102.png" />
+    <Resource Include="Images\tile_0103.png" />
+    <Resource Include="Images\tile_0104.png" />
+    <Resource Include="Images\tile_0105.png" />
+    <Resource Include="Images\Wood.png" />
+    <Resource Include="Images\tile_0107.png" />
+    <Resource Include="Images\tile_0108.png" />
+    <Resource Include="Images\tile_0109.png" />
+    <Resource Include="Images\tile_0110.png" />
+    <Resource Include="Images\tile_0111.png" />
+    <Resource Include="Images\tile_0112.png" />
+    <Resource Include="Images\tile_0113.png" />
+    <Resource Include="Images\tile_0114.png" />
+    <Resource Include="Images\tile_0115.png" />
+    <Resource Include="Images\tile_0116.png" />
+    <Resource Include="Images\tile_0117.png" />
+    <Resource Include="Images\tile_0118.png" />
+    <Resource Include="Images\tile_0119.png" />
+    <Resource Include="Images\tile_0120.png" />
+    <Resource Include="Images\tile_0121.png" />
+    <Resource Include="Images\tile_0122.png" />
+    <Resource Include="Images\tile_0123.png" />
+    <Resource Include="Images\tile_0124.png" />
+    <Resource Include="Images\tile_0125.png" />
+    <Resource Include="Images\tile_0126.png" />
+    <Resource Include="Images\tile_0127.png" />
+    <Resource Include="Images\tile_0128.png" />
+    <Resource Include="Images\tile_0129.png" />
+    <Resource Include="Images\tile_0130.png" />
+    <Resource Include="Images\tile_0131.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\GrassA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

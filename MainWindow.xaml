@@ -1,0 +1,10 @@
+﻿<Window x:Class="TileGame.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:TileGame.ViewModels"
+        WindowState="Maximized"
+        Title="Tile Game" Height="1080" Width="1920">
+    <Grid>
+        <Frame Source="Views/GameView.xaml"/>
+    </Grid>
+</Window>
