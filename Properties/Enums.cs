@@ -12,6 +12,7 @@ namespace TileGame.Enums
         GrassB, 
         GrassC,
         Bush,
+        Mushroom,
         TreeBottomA,
         TreeTopA,
     }

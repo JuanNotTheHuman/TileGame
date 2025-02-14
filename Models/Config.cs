@@ -26,7 +26,7 @@ namespace TileGame.Models
             MaxTransform = maxTransform;
         }
         public TickConfig() {
-            Interval = 50;
+            Interval = 250;
             MaxTransform = 5;
         }
     }
@@ -41,13 +41,14 @@ namespace TileGame.Models
             int maxcalc = (1920 / Tile.Size)*(1080 / Tile.Size);
             BaseGeneration = new Dictionary<TileType, BaseTileConfig>
             {
-                {TileType.GrassA, new ForegroundTileConfig(new List<TileType>{TileType.GrassB},0.05,double.PositiveInfinity,maxcalc/2) },
-                {TileType.GrassB, new ForegroundTileConfig(new List<TileType>{TileType.GrassA},0.03,double.PositiveInfinity,maxcalc/3)},
+                {TileType.GrassA, new ForegroundTileConfig(new List<TileType>{TileType.GrassB},0.03,double.PositiveInfinity,maxcalc/2) },
+                {TileType.GrassB, new ForegroundTileConfig(new List<TileType>{TileType.GrassA},0.05,double.PositiveInfinity,maxcalc/4)},
                 {TileType.GrassC, new ForegroundTileConfig(new List<TileType>{TileType.GrassB},0.01,1,maxcalc/5) },
             };
             ForegroundGeneration = new Dictionary<TileType, ForegroundTileConfig>
             {
-                {TileType.Bush, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB, TileType.GrassC},0.03, 2, 250) }
+                {TileType.Bush, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB, TileType.GrassC},0.03, 2, 250) },
+                {TileType.Mushroom, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },0.01,1,100) }
             };
             DeathDrops = new Dictionary<TileType, IEnumerable<TileDrop>>
             {
@@ -55,6 +56,7 @@ namespace TileGame.Models
                 {TileType.Bush, new List<TileDrop>{new TileDrop(ItemType.Wood,1)} },
                 {TileType.TreeTopA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
                 {TileType.TreeBottomA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
+                {TileType.Mushroom, new List<TileDrop>{new TileDrop(ItemType.Coin,3)} }
             };
             ClickDrops = new Dictionary<TileType, IEnumerable<TileDrop>>();
             {

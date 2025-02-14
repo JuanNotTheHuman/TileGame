@@ -151,7 +151,7 @@
     <Resource Include="Images\tile_0026.png" />
     <Resource Include="Images\tile_0027.png" />
     <Resource Include="Images\tile_0028.png" />
-    <Resource Include="Images\tile_0029.png" />
+    <Resource Include="Images\Mushroom.png" />
     <Resource Include="Images\tile_0030.png" />
     <Resource Include="Images\tile_0031.png" />
     <Resource Include="Images\tile_0032.png" />
@@ -258,8 +258,6 @@
   <ItemGroup>
     <Resource Include="Images\GrassA.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
