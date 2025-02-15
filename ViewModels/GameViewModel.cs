@@ -78,7 +78,7 @@ namespace TileGame.ViewModels
         {
             Config = config;
             Timer = new DispatcherTimer();
-            Timer.Tick += new EventHandler(async (sender, e) => { await Tick(sender, e); });
+            Timer.Tick += new EventHandler((sender, e) => { Tick(sender, e); });
             Timer.Interval = new TimeSpan(Config.Tick.Interval);
             TileClick = new RelayCommand<TileViewModel>(BoardTileClicked);
             PlayerViewModel = new PlayerViewModel(new Player());
@@ -91,6 +91,7 @@ namespace TileGame.ViewModels
             var board = await Board.CreateAsync(1920, 1080, config);
             gameViewModel.BoardViewModel = new BoardViewModel(board);
             gameViewModel.Timer.Start();
+            gameViewModel.BoardViewModel.EnableQueue();
             return gameViewModel;
         }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -98,87 +99,36 @@ namespace TileGame.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private async Task Tick(object sender, EventArgs e)
+        private void Tick(object sender, EventArgs e)
         {
             try
             {
-                Debug.WriteLine("Tick");
-                int transforms = 0;
                 List<TileViewModel> tiles = new List<TileViewModel>();
                 var tilesSnapshot = new ObservableCollection<TileViewModel>(BoardViewModel.Tiles);
-                if(tilesSnapshot.Count(r => tilesSnapshot.Count(r1 => r != r1 && Tile.Collides(r.Tile, r1.Tile)) >= 3) > 0)
+                for (int i = 0; i < Config.Tick.MaxTransform; i++)
                 {
-                    Debug.WriteLine($"Tiles with at least 3 overlapping: {tilesSnapshot.Count(r => tilesSnapshot.Count(r1 => r != r1 && Tile.Collides(r.Tile, r1.Tile)) >= 3)}");
-                }
-                while (transforms < Config.Tick.MaxTransform)
-                {
-                    foreach (var config in Config.Tiles.ForegroundGeneration)
+                    tiles.Clear();
+                    foreach (var pair in Config.Tiles.ForegroundGeneration)
                     {
-                        if (transforms >= Config.Tick.MaxTransform)
+                        TileType type = pair.Key;
+                        ForegroundTileConfig config = pair.Value;
+                        if (config.SpawnBehavior == SpawnBehavior.Spread)
                         {
-                            break;
+                            var tile = tilesSnapshot[Random.Next(tilesSnapshot.Count)];
+                            if (!BoardViewModel.CanSpread(BoardViewModel.TilesAt(tile.X, tile.Y).First(r => r.Type == tile.Type), Config)) continue;
+
                         }
-                        int tileCount = 0;
-                        tileCount = tilesSnapshot.Count(r => r.Type == config.Key);
-                        if (config.Value.Max < tileCount){
-                            continue;
-                        }
-                        if (config.Value.SpawnChance < Random.NextDouble())
+                        else if(config.SpawnBehavior == SpawnBehavior.Random)
                         {
-                            continue;
-                        }
-                        TileViewModel bgTile = tilesSnapshot[Random.Next(BoardViewModel.Tiles.Count())];
-                        if (!config.Value.SpawnableOn.Contains(bgTile.Type))
-                        {
-                            continue;
-                        }
-                        if ((tilesSnapshot.Count(r => Tile.Collides(r.Tile, bgTile.Tile)) > 2)||tiles.Any(r=>Tile.Collides(r.Tile,bgTile.Tile)))
-                        {
-                            continue;
-                        }
-                        tiles.Add(new TileViewModel(new Tile(config.Key, config.Value.Health, bgTile.X, bgTile.Y)));
-                        transforms++;
-                    }
-                    foreach (var config in Config.Tiles.BaseGeneration)
-                    {
-                        if (config.Value is ForegroundTileConfig fconfig)
-                        {
-                            int cnt;
-                            cnt = tilesSnapshot.Count(r => r.Type == config.Key);
-                            if (fconfig.Max > cnt) continue;
-                            if (config.Value.SpawnChance < Random.NextDouble()) continue;
-                            var tl = tilesSnapshot[Random.Next(tilesSnapshot.Count())];
-                            if (!fconfig.SpawnableOn.Contains(tl.Tile.Type)) break;
-                            int c = tilesSnapshot.Count(r => Tile.Collides(r.Tile, tl.Tile));
-                            if (c > 2) continue;
-                            if (tl.Type == config.Key) continue;
-                            await UpdateTileType(tl, config.Key);
-                            transforms++;
+
                         }
                     }
                 }
-                if (tiles.Count > 0) await AddTilesToDisplay(tiles);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
             }
-        }
-        private async Task AddTilesToDisplay(List<TileViewModel> tiles)
-        {
-            await Application.Current.Dispatcher.InvokeAsync(async () =>
-            {
-                var board = BoardViewModel.Tiles;
-                var distinctTiles = tiles.Where(r =>!tiles.Any(r1 => r != r1 && Tile.Collides(r.Tile, r1.Tile)));
-                foreach (var tile in distinctTiles)
-                {
-                    board.Add(tile);
-                    await Task.Delay(5);
-                    Debug.WriteLine($"Finalized: Added a {tile.Type} at ({tile.X}, {tile.Y})");
-                }
-                BoardViewModel.OnPropertyChanged(nameof(BoardViewModel.Tiles));
-                Debug.WriteLine($"Total Tiles After Update: {board.Count}");
-            });
         }
 
         private async Task UpdateTileType(TileViewModel tile, TileType newType)

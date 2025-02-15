@@ -48,15 +48,15 @@ namespace TileGame.Models
             ForegroundGeneration = new Dictionary<TileType, ForegroundTileConfig>
             {
                 {TileType.Bush, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB, TileType.GrassC},0.03, 2, 250) },
-                {TileType.Mushroom, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },0.01,1,100) }
+                {TileType.Mushrooms, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },SpawnBehavior.Spread,0.01,1,100) }
             };
             DeathDrops = new Dictionary<TileType, IEnumerable<TileDrop>>
             {
-                {TileType.GrassC, new List<TileDrop>{new TileDrop(ItemType.Coin,1)} },
+                {TileType.GrassC, new List<TileDrop>{new TileDrop(ItemType.Flower,2)} },
                 {TileType.Bush, new List<TileDrop>{new TileDrop(ItemType.Wood,1)} },
                 {TileType.TreeTopA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
                 {TileType.TreeBottomA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
-                {TileType.Mushroom, new List<TileDrop>{new TileDrop(ItemType.Coin,3)} }
+                {TileType.Mushrooms, new List<TileDrop>{new TileDrop(ItemType.Mushroom,2)} }
             };
             ClickDrops = new Dictionary<TileType, IEnumerable<TileDrop>>();
             {
@@ -78,8 +78,16 @@ namespace TileGame.Models
     {
         public int Max { get; }
         public IEnumerable<TileType> SpawnableOn { get; }
+        public SpawnBehavior SpawnBehavior { get; }
+        public ForegroundTileConfig(IEnumerable<TileType> spawnableOn,SpawnBehavior spawnBehavior, double spawnChance, double health, int max) : base(spawnChance, health)
+        {
+            SpawnBehavior = spawnBehavior;
+            SpawnableOn = spawnableOn;
+            Max = max;
+        }
         public ForegroundTileConfig(IEnumerable<TileType> spawnableOn, double spawnChance, double health, int max) : base(spawnChance, health)
         {
+            SpawnBehavior = SpawnBehavior.Random;
             SpawnableOn = spawnableOn;
             Max = max;
         }

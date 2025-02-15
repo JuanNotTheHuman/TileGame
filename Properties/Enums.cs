@@ -12,7 +12,7 @@ namespace TileGame.Enums
         GrassB, 
         GrassC,
         Bush,
-        Mushroom,
+        Mushrooms,
         TreeBottomA,
         TreeTopA,
     }
@@ -27,5 +27,12 @@ namespace TileGame.Enums
     {
         Coin,
         Wood,
+        Mushroom,
+        Flower
+    }
+    public enum SpawnBehavior
+    {
+        Random,
+        Spread,
     }
 }

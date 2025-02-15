@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TileGame.ViewModels"
         WindowState="Maximized"
+        ResizeMode="NoResize"
         Title="Tile Game" Height="1080" Width="1920">
     <Grid>
         <Frame Source="Views/GameView.xaml"/>
