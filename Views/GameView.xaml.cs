@@ -28,7 +28,21 @@ namespace TileGame.Views
         }
         private async void InitializeGameViewMode()
         {
-            DataContext = await GameViewModel.CreateAsync();
+            LoadingScreen.Visibility = Visibility.Visible;
+            var gameViewModelTask = GameViewModel.CreateAsync();
+            while (!gameViewModelTask.IsCompleted)
+            {
+                text.Content += ".";
+                await Task.Delay(10);
+                if (text.Content.ToString().Length > 3)
+                {
+                    text.Content = "";
+                }
+            }
+            var gameViewModel = gameViewModelTask.Result;
+            DataContext = gameViewModel;
+            LoadingScreen.Visibility = Visibility.Collapsed;
         }
+
     }
 }

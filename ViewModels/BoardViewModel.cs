@@ -5,93 +5,108 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
+using TileGame.Enums;
 using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
     public class BoardViewModel : INotifyPropertyChanged
     {
-        public Board Board { get; private set; }
-        private ObservableCollection <TileViewModel> _tiles;
-        public BoardViewModel(Board board)
-        {
-            Board = board;
-            _tiles = new ObservableCollection<TileViewModel>(
-                board.TileGrid.Select(tile => new TileViewModel(tile))
-            );
-            DispatcherTimer.Tick += new EventHandler(async(sender, e) => { await AddTilesToDisplay(); });
-            DispatcherTimer.Interval = new TimeSpan(10);
-        }
-        private DispatcherTimer DispatcherTimer { get; } = new DispatcherTimer();
-        public ObservableCollection<TileViewModel> Tiles
-        {
-            get => _tiles;
-            set
-            {
-                if (_tiles != value)
-                {
-                    _tiles = value;
-                    OnPropertyChanged(nameof(Tiles));
-                }
-            }
-        }
+        public int Seed;
+        private Random _random;
+        private readonly DispatcherTimer _timer = new DispatcherTimer();
+        private int _score;
+
+        public Board Board { get; }
+        private Config Config { get; }
+        public ObservableCollection<TileViewModel> Tiles { get; }
         public Collection<TileViewModel> RenderQueue { get; } = new Collection<TileViewModel>();
+
         public int Score
         {
-            get => Score;
+            get => _score;
             set
             {
-                if(Score != value)
+                if (_score != value)
                 {
-                    Score = value;
-                    OnPropertyChanged(nameof(Score));
+                    _score = value;
+                    OnPropertyChanged();
                 }
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]  string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public BoardViewModel(Board board, Config config)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Config = config;
+            Board = board;
+            Tiles = new ObservableCollection<TileViewModel>(
+                board.TileGrid.Select(tile => new TileViewModel(tile))
+            );
+            Seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
+            _random = new Random(Seed);
+            _timer.Interval = TimeSpan.FromMilliseconds(Config.Tick.Interval);
+            _timer.Tick += async (sender, e) => await Tick();
+            _timer.Start();
         }
-        public bool CheckCollisions(TileViewModel tvm, Config config)
+        public bool CanSpread(TileViewModel tvm)
         {
-            return Tiles.Any(r =>Tile.Collides(tvm.Tile,r.Tile)&&config.Tiles.ForegroundGeneration.ContainsKey(r.Type));
+            if (TilesAt(tvm.X,tvm.Y).Count>1) return false;
+            return TilesAt(tvm.X - Tile.Size, tvm.Y).Any(r => r.Type == tvm.Type) ||
+                   TilesAt(tvm.X + Tile.Size, tvm.Y).Any(r => r.Type == tvm.Type) ||
+                   TilesAt(tvm.X, tvm.Y - Tile.Size).Any(r => r.Type == tvm.Type) ||
+                   TilesAt(tvm.X, tvm.Y + Tile.Size).Any(r => r.Type == tvm.Type);
         }
-        public bool CanSpread(TileViewModel tvm, Config config)
-        {
-            if(!CheckCollisions(tvm, config))
-            {
-                if(TilesAt(tvm.X - Tile.Size,tvm.Y).Any(r=>r.Type==tvm.Type))return true; //has to the left
-                if (TilesAt(tvm.X + Tile.Size, tvm.Y).Any(r => r.Type == tvm.Type)) return true; //has to the right
-                if (TilesAt(tvm.X, tvm.Y - Tile.Size).Any(r => r.Type == tvm.Type)) return true; //has to the top
-                if (TilesAt(tvm.X, tvm.Y + Tile.Size).Any(r => r.Type == tvm.Type)) return true; //has to the bottom
-            }
-            return false;
-        }
-        public IEnumerable<TileViewModel> TilesAt(double x, double y)
-        {
-            return Tiles.Where(r=>r.X == x && r.Y == y);
-        }
-        public void EnableQueue() => DispatcherTimer.Start();
+        public Collection<TileViewModel> TilesAt(double x, double y) => new Collection<TileViewModel>(Tiles.Where(r => r.X == x && r.Y == y).ToList());
         private async Task AddTilesToDisplay()
         {
-            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            var queueSnapshot = RenderQueue.ToList();
+            RenderQueue.Clear();
+            foreach (var tile in queueSnapshot)
             {
-                foreach (var tile in RenderQueue)
+                Tiles.Add(tile);
+                await Task.Delay(5);
+            }
+            OnPropertyChanged(nameof(Tiles));
+        }
+        private async Task Tick()
+        {
+            try
+            {
+                int totalTransforms = 0;
+                var spawnableTiles = Tiles.Where(tile => Config.Tiles.ForegroundGeneration.Any(c => c.Value.SpawnableOn.Contains(tile.Type)) && TilesAt(tile.X, tile.Y).Count == 1).ToList();
+                foreach (var entry in Config.Tiles.ForegroundGeneration)
                 {
-                    RenderQueue.Remove(tile);
-                    Tiles.Add(tile);
-                    await Task.Delay(5);
-                    Debug.WriteLine($"Finalized: Added a {tile.Type} at ({tile.X}, {tile.Y})");
+                    var type = entry.Key;
+                    var config = entry.Value;
+                    int currentCount = Tiles.Count(r => r.Type == type);
+                    if (currentCount >= config.Max) continue;
+                    double adjustedSpawnChance = config.SpawnChance * (1 - (double)currentCount / config.Max);
+                    for (int i = 0; i < Config.Tick.MaxTransform; i++)
+                    {
+                        if (totalTransforms >= Config.Tick.MaxTransform) break;
+                        var tile = spawnableTiles[_random.Next(spawnableTiles.Count)];
+                        if (adjustedSpawnChance < _random.NextDouble()) continue;
+                        if (config.SpawnBehavior == SpawnBehavior.Random || (config.SpawnBehavior == SpawnBehavior.Spread && CanSpread(tile)))
+                        {
+                            RenderQueue.Add(new TileViewModel(new Tile(type, config.Health, tile.X, tile.Y)));
+                            totalTransforms++;
+                        }
+                    }
+                    if (totalTransforms >= Config.Tick.MaxTransform) break;
                 }
-                OnPropertyChanged(nameof(Tiles));
-                Debug.WriteLine($"Total Tiles After Update: {Tiles.Count}");
-            });
+                if (RenderQueue.Count > 0) await AddTilesToDisplay();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in Tick: {ex}");
+            }
         }
     }
 }

@@ -9,6 +9,9 @@
         <helpers:EnumToImagePathConverter x:Key="TileImageConverter"/>
         <helpers:ItemEnumToImagePathConverter x:Key="ItemImageConverter"/>
     </Page.Resources>
+    <Page.Background>
+        <SolidColorBrush Color="Black"/>
+    </Page.Background>
     <Grid>
         <Canvas>
             <ItemsControl x:Name="tiles" ItemsSource="{Binding BoardViewModel.Tiles}">
@@ -59,5 +62,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Canvas>
+        <Grid x:Name="LoadingScreen">
+            <Label x:Name="text" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Loading" FontSize="200" Foreground="White"/>
+        </Grid>
     </Grid>
 </Page>

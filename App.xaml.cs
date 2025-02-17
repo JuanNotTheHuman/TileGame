@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace TileGame
     /// </summary>
     public partial class App : Application
     {
+
     }
 }
