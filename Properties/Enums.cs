@@ -15,8 +15,6 @@ namespace TileGame.Enums
         Mushrooms,
         TreeA,
         TreeB,
-        TreeBottomA,
-        TreeTopA,
     }
     public enum TileCategory
     {

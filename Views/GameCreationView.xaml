@@ -36,7 +36,6 @@
         <helpers:ItemEnumToImagePathConverter x:Key="ItemImageConverter"/>
         <helpers:KeyInSpawnableOnConverter x:Key="KeyInSpawnableOnConverter"/>
         <helpers:SpawnChanceToPercentageConverter x:Key="SpawnChanceToPercentageConverter"/>
-        <helpers:DictionaryKeyConverter x:Key="DictionaryKeyConverter"/>
         <helpers:ClickDropCountConverter x:Key="ClickDropCountConverter"/>
         <helpers:DropCommandConverter x:Key="DropCommandConverter"/>
         <Style TargetType="Label">
@@ -59,12 +58,65 @@
                 <x:Type TypeName="enums:ItemType"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <Style x:Key="AnimatedButtonStyle" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Width" Value="500"/>
+                <Setter Property="Height" Value="90"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Image Name="ButtonImage" Source="../Images/UI/button_grey.png" Stretch="Fill" Width="200">
+                                    <Image.RenderTransform>
+                                        <ScaleTransform x:Name="ButtonScaleTransform" ScaleX="1" ScaleY="1"/>
+                                    </Image.RenderTransform>
+                                    <Image.RenderTransformOrigin>
+                                        <Point X="0.5" Y="0.5"/>
+                                    </Image.RenderTransformOrigin>
+                                </Image>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ContentPresenter.ContentTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </ContentPresenter.ContentTemplate>
+                                </ContentPresenter>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="0.95" Duration="0:0:0.1" AutoReverse="True"/>
+                                                <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="0.95" Duration="0:0:0.1" AutoReverse="True"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.85"/>
+                                    <Setter Property="Foreground" Value="#2e2c2c"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
     </Page.Resources>
     <Page.DataContext>
         <vm:GameCreationViewModel x:Name="gcv"/>
     </Page.DataContext>
     <ScrollViewer>
-        <StackPanel HorizontalAlignment="Center" Margin="10">
+        <StackPanel HorizontalAlignment="Center" Margin="10" Width="400">
             <StackPanel Margin="0,0,0,10">
                 <Label HorizontalAlignment="Center" Width="250" HorizontalContentAlignment="Center">
                     <Run Text="Seed: " FontWeight="Bold"/>
@@ -110,7 +162,7 @@
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border BorderBrush="Gray" BorderThickness="2">
+                                    <Border BorderBrush="WhiteSmoke" BorderThickness="2">
                                         <Image Source="{Binding Key, Converter={StaticResource TileImageConverter}}">
                                             <Image.ToolTip>
                                                 <TextBlock Text="{Binding Key}"/>
@@ -152,7 +204,7 @@
                                         <Border>
                                             <Image Source="{Binding Key, Converter={StaticResource TileImageConverter}}">
                                                 <Image.ToolTip>
-                                                    <TextBlock Text="{Binding Key}"/> <!-- i want to access this (Key)-->
+                                                    <TextBlock Text="{Binding Key}"/>
                                                 </Image.ToolTip>
                                             </Image>
                                             <Border.Style>
@@ -216,35 +268,52 @@
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                 </ItemsControl>
-                                                <Label Content="Click Drops:" FontWeight="Bold"/>
-                                                <ItemsControl ItemsSource="{Binding Source={StaticResource ItemTypeValues}}" DataContext="{Binding Config.Tiles, ElementName=gcv}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <StackPanel/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <!-- Trying to make this work -->
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <Image VerticalAlignment="Center" HorizontalAlignment="Left" Source="{Binding ., Converter={StaticResource ItemImageConverter}}" Width="16" Height="16">
-                                                                    <Image.ToolTip>
-                                                                        <TextBlock Text="{Binding .}"/>
-                                                                    </Image.ToolTip>
-                                                                </Image>
-                                                                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
-                                                                    <Button Content="-" Width="16" Height="16" Command="{Binding DataContext.ModifyDropCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding ., Converter={StaticResource DropCommandConverter}, ConverterParameter=Decrement}"/>
-                                                                    <Label>
-                                                                        <Label.Content>
-                                                                            <Binding Path="Value" ElementName="itv"/>
-                                                                        </Label.Content>
-                                                                    </Label>
-                                                                    <Button Content="+" Width="16" Height="16" Command="{Binding DataContext.ModifyDropCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Key, RelativeSource={RelativeSource AncestorType=ContentPresenter}, Converter={StaticResource DropCommandConverter}, ConverterParameter=Increment}"/>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="25"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Label Content="Click Drops:" FontWeight="Bold"/>
+                                                    <Label Content="Death Drops:" FontWeight="Bold" Grid.Column="1"/>
+                                                    <ItemsControl ItemsSource="{Binding Value.ClickDrops}" Grid.Row="1">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    <Image Source="{Binding Key,Converter={StaticResource ItemImageConverter}}" Width="24" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                                    <Label Content="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    <Button Content="-" Command="{Binding DataContext.Value.DecrementClickDropCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Key}" Width="16" Height="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    <Button Content="+" Command="{Binding DataContext.Value.IncrementClickDropCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Key}" Width="16" Height="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </StackPanel>
-                                                            </StackPanel>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <ItemsControl ItemsSource="{Binding Value.DeathDrops}" Grid.Row="1" Grid.Column="1">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <StackPanel/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    <Image Source="{Binding Key,Converter={StaticResource ItemImageConverter}}" Width="24" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                                    <Label Content="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                    <Button Content="-" Command="{Binding DataContext.Value.DecrementDeathDropCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Key}" Width="16" Height="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    <Button Content="+" Command="{Binding DataContext.Value.IncrementDeathDropCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Key}" Width="16" Height="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Grid>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
@@ -254,6 +323,14 @@
                     </ItemsControl>
                 </StackPanel>
             </GroupBox>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource AnimatedButtonStyle}" Height="70" Width="200" Content="Cancel" Command="{Binding CancelCommand}"/>
+                <Button Style="{StaticResource AnimatedButtonStyle}" Grid.Column="1" Height="70" Width="200" Content="Create World" Command="{Binding CreateWorldCommand}"/>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </Page>

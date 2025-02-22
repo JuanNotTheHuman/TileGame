@@ -17,7 +17,7 @@ namespace TileGame.ViewModels
 
         private void CreateGame(object obj)
         {
-            _navigationService.NavigateToPage(new GameView());
+            _navigationService.NavigateToPage(new GameCreationView());
         }
         public MenuViewModel()
         {

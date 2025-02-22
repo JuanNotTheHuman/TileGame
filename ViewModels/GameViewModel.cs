@@ -56,20 +56,34 @@ namespace TileGame.ViewModels
                     BoardViewModel.Tiles.Add(new TileViewModel(new Tile(TileType.GrassB, Config.Tiles.BaseGeneration[TileType.GrassB].Health, tile.X, tile.Y)));
 
                 }
-                if (Config.Tiles.DeathDrops.ContainsKey(tile.Type))
+                if (Config.Tiles.ForegroundGeneration.ContainsKey(tile.Type))
                 {
-                    foreach (TileDrop drop in Config.Tiles.DeathDrops[tile.Type])
+                    foreach (KeyValuePair<ItemType, int> drop in Config.Tiles.ForegroundGeneration[tile.Type].DeathDrops)
                     {
-                        PlayerViewModel.Inventory.Items[drop.Type].Count += drop.Count;
+                        PlayerViewModel.Inventory.Items[drop.Key].Count += drop.Value;
+                    }
+                }
+                else if (Config.Tiles.BaseGeneration.ContainsKey(tile.Type))
+                {
+                    foreach (KeyValuePair<ItemType, int> drop in Config.Tiles.BaseGeneration[tile.Type].DeathDrops)
+                    {
+                        PlayerViewModel.Inventory.Items[drop.Key].Count += drop.Value;
                     }
                 }
                 return;
             }
-            if (Config.Tiles.ClickDrops.ContainsKey(tile.Type))
+            if (Config.Tiles.ForegroundGeneration.ContainsKey(tile.Type))
             {
-                foreach (TileDrop drop in Config.Tiles.ClickDrops[tile.Type])
+                foreach (KeyValuePair<ItemType, int> drop in Config.Tiles.ForegroundGeneration[tile.Type].ClickDrops)
                 {
-                    PlayerViewModel.Inventory.Items[drop.Type].Count += drop.Count;
+                    PlayerViewModel.Inventory.Items[drop.Key].Count += drop.Value;
+                }
+            }
+            else if (Config.Tiles.BaseGeneration.ContainsKey(tile.Type))
+            {
+                foreach (KeyValuePair<ItemType, int> drop in Config.Tiles.BaseGeneration[tile.Type].ClickDrops)
+                {
+                    PlayerViewModel.Inventory.Items[drop.Key].Count += drop.Value;
                 }
             }
         }
@@ -87,11 +101,18 @@ namespace TileGame.ViewModels
         }
         public static async Task<GameViewModel> CreateAsync()
         {
-
             var config = new Config();
             var gameViewModel = new GameViewModel(config);
             var board = await Board.CreateAsync(1920, 1080, config);
             gameViewModel.BoardViewModel = new BoardViewModel(board,config);
+            return gameViewModel;
+        }
+        public static async Task<GameViewModel> CreateAsync(Config config)
+        {
+
+            var gameViewModel = new GameViewModel(config);
+            var board = await Board.CreateAsync(1920, 1080, config);
+            gameViewModel.BoardViewModel = new BoardViewModel(board, config);
             return gameViewModel;
         }
         public event PropertyChangedEventHandler PropertyChanged;

@@ -6,6 +6,6 @@
         ResizeMode="NoResize"
         Title="Tile Game" Height="1080" Width="1920">
     <Grid>
-        <Frame x:Name="MainFrame" Source="Views/GameCreationView.xaml" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="MainFrame" Source="Views/MenuView.xaml" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

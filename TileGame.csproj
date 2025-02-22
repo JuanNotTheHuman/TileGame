@@ -61,7 +61,6 @@
     <Compile Include="Factories\MenuViewModelFactory.cs" />
     <Compile Include="Helpers\BooleanToBorderThicknessConverter.cs" />
     <Compile Include="Helpers\ClickDropCountConverter.cs" />
-    <Compile Include="Helpers\DictionaryKeyToValueConverter.cs" />
     <Compile Include="Helpers\DropCommandConverter.cs" />
     <Compile Include="Helpers\EnumToImagePathConverter.cs" />
     <Compile Include="Helpers\ItemEnumToImagePathConverter.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\TickConfigViewModel.cs" />
     <Compile Include="ViewModels\TileConfigViewModel.cs" />
-    <Compile Include="ViewModels\TileDropViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="Views\GameCreationView.xaml.cs">
       <DependentUpon>GameCreationView.xaml</DependentUpon>

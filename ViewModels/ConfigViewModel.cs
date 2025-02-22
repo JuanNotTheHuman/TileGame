@@ -18,6 +18,13 @@ namespace TileGame.ViewModels
         private Config _config;
         private TickConfigViewModel _tickConfig;
         private TileConfigViewModel _tileConfig;
+        public Config Config
+        {
+            get
+            {
+                return _config;
+            }
+        }
         public TickConfigViewModel Tick
         {
             get => _tickConfig;
@@ -70,6 +77,10 @@ namespace TileGame.ViewModels
         {
             Seed=(int)DateTime.Now.Ticks & 0x0000FFFF;
             OnPropertyChanged(nameof(Seed));
+        }
+        public Config ToConfig()
+        {
+            return new Config(Seed, Tick.ToTickConfig(), Tiles.ToTileConfig());
         }
     }
 }

@@ -48,5 +48,9 @@ namespace TileGame.ViewModels
             Interval = _tickConfig.Interval;
             MaxTransform = _tickConfig.MaxTransform;
         }
+        public TickConfig ToTickConfig()
+        {
+            return new TickConfig(Interval, MaxTransform);
+        }
     }
 }

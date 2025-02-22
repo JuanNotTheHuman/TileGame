@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TileGame.Models;
 using TileGame.ViewModels;
 
 namespace TileGame.Views
@@ -26,10 +28,18 @@ namespace TileGame.Views
             InitializeComponent();
             InitializeGameViewMode();
         }
-        private async void InitializeGameViewMode()
+        public GameView(Config config)
         {
+            InitializeComponent();
+            Debug.WriteLine(config.Tiles.ForegroundGeneration[Enums.TileType.TreeB].DeathDrops[Enums.ItemType.Wood]+" a");
+            InitializeGameViewMode(config);
+        }
+        private async void InitializeGameViewMode(Config config=null)
+        {
+            Debug.WriteLine(config);
             LoadingScreen.Visibility = Visibility.Visible;
-            var gameViewModelTask = GameViewModel.CreateAsync();
+            Debug.WriteLine(config.Tiles.ForegroundGeneration[Enums.TileType.TreeB].DeathDrops[Enums.ItemType.Wood]);
+            var gameViewModelTask = GameViewModel.CreateAsync(config);
             while (!gameViewModelTask.IsCompleted)
             {
                 text.Content += ".";

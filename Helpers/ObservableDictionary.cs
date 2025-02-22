@@ -27,11 +27,26 @@ namespace TileGame.Helpers
             }
             return false;
         }
+
+        public bool TryUpdate(TKey key, TValue newValue)
+        {
+            if (ContainsKey(key))
+            {
+                var oldValue = this[key];
+                this[key] = newValue;
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                return true;
+            }
+            return false;
+        }
+
         public ObservableDictionary() : base() { }
+
         public ObservableDictionary(IDictionary<TKey, TValue> dictionary) : base(dictionary)
         {
             NotifyReset();
         }
+
         public new void Clear()
         {
             base.Clear();

@@ -26,7 +26,7 @@ namespace TileGame.Helpers
             // Debug output to check values
             System.Diagnostics.Debug.WriteLine($"ItemType: {itemType}, ClickDrops: {clickDrops}");
 
-            if (clickDrops is ObservableDictionary<TileType, ObservableCollection<TileDrop>> dropsDict)
+            if (clickDrops is ObservableDictionary<TileType, ObservableDictionary<ItemType,int>> dropsDict)
             {
                 // Log all the keys in the dictionary for comparison
                 foreach (var key in dropsDict.Keys)

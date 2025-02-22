@@ -33,14 +33,12 @@ public class Board
         int columns = (int)(screenWidth / Tile.Size);
         int rows = (int)(screenHeight / Tile.Size);
         var totalTiles = columns * rows;
-
         List<WeightedRandomItem<TileType>> Tiles = new List<WeightedRandomItem<TileType>>
         {
             new WeightedRandomItem<TileType>(TileType.GrassA, Config.Tiles.BaseGeneration[TileType.GrassA].SpawnChance),
             new WeightedRandomItem<TileType>(TileType.GrassB, Config.Tiles.BaseGeneration[TileType.GrassB].SpawnChance),
             new WeightedRandomItem<TileType>(TileType.GrassC, Config.Tiles.BaseGeneration[TileType.GrassC].SpawnChance),
         };
-
         var random = new Random(Config.Seed);
         for (int i = 0; i < totalTiles; i++)
         {
