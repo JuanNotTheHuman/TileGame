@@ -33,11 +33,7 @@ namespace TileGame.Views
             while (!gameViewModelTask.IsCompleted)
             {
                 text.Content += ".";
-                await Task.Delay(10);
-                if (text.Content.ToString().Length > 3)
-                {
-                    text.Content = "";
-                }
+                await Task.Delay(50);
             }
             var gameViewModel = gameViewModelTask.Result;
             DataContext = gameViewModel;

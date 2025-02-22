@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +10,9 @@ namespace TileGame.Models
 {
     public class Config
     {
-        public TickConfig Tick { get; }
-        public TileConfig Tiles { get; }
+        public int Seed { get; set; }
+        public TickConfig Tick { get; set; }
+        public TileConfig Tiles { get; set; }
         public Config() {
             Tick = new TickConfig();
             Tiles = new TileConfig();
@@ -18,56 +20,59 @@ namespace TileGame.Models
     }
     public class TickConfig
     {
-        public int Interval { get; }
-        public int MaxTransform { get; }
+        public int Interval { get; set; }
+        public int MaxTransform { get; set; }
         public TickConfig(int interval, int maxTransform)
         {
             Interval = interval;
             MaxTransform = maxTransform;
         }
         public TickConfig() {
-            Interval = 250;
-            MaxTransform = 5;
+            Interval = 100;
+            MaxTransform = 15;
         }
     }
     public class TileConfig
     {
-        public Dictionary<TileType, BaseTileConfig> BaseGeneration { get; }
-        public Dictionary<TileType, ForegroundTileConfig> ForegroundGeneration { get; }
-        public Dictionary<TileType, IEnumerable<TileDrop>> ClickDrops { get; }
-        public Dictionary<TileType, IEnumerable<TileDrop>> DeathDrops { get; }
+        public Dictionary<TileType, BaseTileConfig> BaseGeneration { get; set; }
+        public Dictionary<TileType, ForegroundTileConfig> ForegroundGeneration { get; set; }
+        public Dictionary<TileType, ICollection<TileDrop>> ClickDrops { get; set; }
+        public Dictionary<TileType, ICollection<TileDrop>> DeathDrops { get; set; }
         public TileConfig()
         {
             int maxcalc = (1920 / Tile.Size)*(1080 / Tile.Size);
             BaseGeneration = new Dictionary<TileType, BaseTileConfig>
             {
-                {TileType.GrassA, new ForegroundTileConfig(new List<TileType>{TileType.GrassB},0.03,double.PositiveInfinity,maxcalc/2) },
-                {TileType.GrassB, new ForegroundTileConfig(new List<TileType>{TileType.GrassA},0.05,double.PositiveInfinity,maxcalc/4)},
-                {TileType.GrassC, new ForegroundTileConfig(new List<TileType>{TileType.GrassB},0.01,1,maxcalc/5) },
+                {TileType.GrassA, new ForegroundTileConfig(new Collection<TileType>{TileType.GrassB},0.03,double.PositiveInfinity,maxcalc/2) },
+                {TileType.GrassB, new ForegroundTileConfig(new Collection<TileType>{TileType.GrassA},0.05,double.PositiveInfinity,maxcalc/4)},
+                {TileType.GrassC, new ForegroundTileConfig(new Collection<TileType>{TileType.GrassB},0.01,1,maxcalc/5) },
             };
             ForegroundGeneration = new Dictionary<TileType, ForegroundTileConfig>
             {
-                {TileType.Bush, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB, TileType.GrassC},0.03, 2, 250) },
-                {TileType.Mushrooms, new ForegroundTileConfig(new List<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },SpawnBehavior.Spread,0.01,1,100) }
-            };
-            DeathDrops = new Dictionary<TileType, IEnumerable<TileDrop>>
-            {
-                {TileType.GrassC, new List<TileDrop>{new TileDrop(ItemType.Flower,2)} },
-                {TileType.Bush, new List<TileDrop>{new TileDrop(ItemType.Wood,1)} },
-                {TileType.TreeTopA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
-                {TileType.TreeBottomA, new List<TileDrop>{new TileDrop(ItemType.Wood,2)}},
-                {TileType.Mushrooms, new List<TileDrop>{new TileDrop(ItemType.Mushroom,2)} }
-            };
-            ClickDrops = new Dictionary<TileType, IEnumerable<TileDrop>>();
-            {
+                {TileType.Bush, new ForegroundTileConfig(new Collection<TileType>{TileType.GrassA,TileType.GrassB, TileType.GrassC},0.03, 1, 250) },
+                {TileType.Mushrooms, new ForegroundTileConfig(new Collection<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },SpawnBehavior.Spread,0.01,1,100) },
+                {TileType.TreeA,new ForegroundTileConfig(new Collection<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },0.02,2,200) },
+                {TileType.TreeB,new ForegroundTileConfig(new Collection<TileType>{TileType.GrassA,TileType.GrassB,TileType.GrassC },0.02,2,175) }
 
+            };
+            DeathDrops = new Dictionary<TileType, ICollection<TileDrop>>
+            {
+                {TileType.GrassC, new Collection<TileDrop>{new TileDrop(ItemType.Flower,2)} },
+                {TileType.Bush, new Collection<TileDrop>{new TileDrop(ItemType.Wood,1)} },
+                {TileType.TreeA, new Collection<TileDrop>{new TileDrop(ItemType.Wood,2)}},
+                {TileType.TreeB, new Collection<TileDrop>{new TileDrop(ItemType.Wood,1)}},
+                {TileType.Mushrooms, new Collection<TileDrop>{new TileDrop(ItemType.Mushroom,2)} }
+            };
+            ClickDrops = new Dictionary<TileType, ICollection<TileDrop>>
+            {
+                { TileType.TreeB,new Collection<TileDrop>{ new TileDrop(ItemType.Honey,1)}}
             };
         }
     }
     public class BaseTileConfig
     {
-        public double SpawnChance { get; }
-        public double Health { get; }
+        public double SpawnChance { get; set; }
+        public double Health { get; set; }
         public BaseTileConfig(double spawnChance, double health)
         {
             SpawnChance = spawnChance;
@@ -76,16 +81,16 @@ namespace TileGame.Models
     }
     public class ForegroundTileConfig : BaseTileConfig
     {
-        public int Max { get; }
-        public IEnumerable<TileType> SpawnableOn { get; }
-        public SpawnBehavior SpawnBehavior { get; }
-        public ForegroundTileConfig(IEnumerable<TileType> spawnableOn,SpawnBehavior spawnBehavior, double spawnChance, double health, int max) : base(spawnChance, health)
+        public int Max { get; set; }
+        public Collection<TileType> SpawnableOn { get; set; }
+        public SpawnBehavior SpawnBehavior { get; set; }
+        public ForegroundTileConfig(Collection<TileType> spawnableOn,SpawnBehavior spawnBehavior, double spawnChance, double health, int max) : base(spawnChance, health)
         {
             SpawnBehavior = spawnBehavior;
             SpawnableOn = spawnableOn;
             Max = max;
         }
-        public ForegroundTileConfig(IEnumerable<TileType> spawnableOn, double spawnChance, double health, int max) : base(spawnChance, health)
+        public ForegroundTileConfig(Collection<TileType> spawnableOn, double spawnChance, double health, int max) : base(spawnChance, health)
         {
             SpawnBehavior = SpawnBehavior.Random;
             SpawnableOn = spawnableOn;
@@ -94,8 +99,8 @@ namespace TileGame.Models
     }
     public class TileDrop
     {
-        public ItemType Type { get; }
-        public int Count { get; }
+        public ItemType Type { get; set; }
+        public int Count { get; set; }
         public TileDrop(ItemType type)
         {
             Type = type;

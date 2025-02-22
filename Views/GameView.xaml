@@ -5,9 +5,39 @@
       xmlns:helpers="clr-namespace:TileGame.Helpers"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       Title="Game View" Width="1920" Height="1080">
+    <Page.DataContext>
+        <vm:GameViewModel/>
+    </Page.DataContext>
     <Page.Resources>
         <helpers:EnumToImagePathConverter x:Key="TileImageConverter"/>
         <helpers:ItemEnumToImagePathConverter x:Key="ItemImageConverter"/>
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="#99000000"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Gray" BlurRadius="1" ShadowDepth="0"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="0">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Page.Background>
         <SolidColorBrush Color="Black"/>
@@ -50,10 +80,12 @@
                         <StackPanel Height="48">
                             <Image Source="{Binding Key, Converter={StaticResource ItemImageConverter}}" Width="24" Height="24">
                                 <Image.ToolTip>
-                                    <StackPanel Background="White">
-                                        <TextBlock Text="{Binding Key}"/>
-                                        <TextBlock Text="{Binding Value.Description}"/>
-                                    </StackPanel>
+                                    <Border CornerRadius="25">
+                                        <StackPanel Background="Transparent">
+                                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Center" FontWeight="Bold" Foreground="Wheat"/>
+                                            <TextBlock Text="{Binding Value.Description}" Foreground="WhiteSmoke"/>
+                                        </StackPanel>
+                                    </Border>
                                 </Image.ToolTip>
                             </Image>
                             <Label Content="{Binding Value.Count}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
@@ -63,6 +95,7 @@
             </ItemsControl>
         </Canvas>
         <Grid x:Name="LoadingScreen">
+            <Rectangle Fill="Black"/>
             <Label x:Name="text" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Loading" FontSize="200" Foreground="White"/>
         </Grid>
     </Grid>

@@ -24,7 +24,8 @@ namespace TileGame.Models
                 {ItemType.Coin, new Item("Used to buy goods.") },
                 {ItemType.Wood, new Item("A primary resource.") },
                 {ItemType.Mushroom, new Item("Just a mushroom.") },
-                {ItemType.Flower, new Item("A really pretty flower.") }
+                {ItemType.Flower, new Item("A really pretty flower.") },
+                {ItemType.Honey, new Item("A very sticky, yet yummy substance.") }
             };
         }
     }

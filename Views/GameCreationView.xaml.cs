@@ -12,21 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TileGame.Factories;
 using TileGame.ViewModels;
 
 namespace TileGame.Views
 {
     /// <summary>
-    /// Logika interakcji dla klasy MenuView.xaml
+    /// Logika interakcji dla klasy GameCreationView.xaml
     /// </summary>
-    public sealed partial class MenuView : Page
+    public partial class GameCreationView : Page
     {
-        public MenuView()
+        public GameCreationView()
         {
             InitializeComponent();
-            var navigationService = new NavigationService(((MainWindow)App.Current.MainWindow).MainFrame);
-            DataContext = new MenuViewModel(navigationService);
+            DataContext = new GameCreationViewModel();
         }
     }
 }

@@ -59,21 +59,36 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Factories\MenuViewModelFactory.cs" />
+    <Compile Include="Helpers\BooleanToBorderThicknessConverter.cs" />
+    <Compile Include="Helpers\ClickDropCountConverter.cs" />
+    <Compile Include="Helpers\DictionaryKeyToValueConverter.cs" />
+    <Compile Include="Helpers\DropCommandConverter.cs" />
     <Compile Include="Helpers\EnumToImagePathConverter.cs" />
     <Compile Include="Helpers\ItemEnumToImagePathConverter.cs" />
+    <Compile Include="Helpers\KeyInSpawnableOnConverter.cs" />
     <Compile Include="Helpers\ObservableDictionary.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
+    <Compile Include="Helpers\SpawnChanceToPercentageConverter.cs" />
     <Compile Include="Helpers\WeightedRandom.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="ViewModels\BFTileConfigViewModel.cs" />
     <Compile Include="ViewModels\BoardViewModel.cs" />
+    <Compile Include="ViewModels\ConfigViewModel.cs" />
+    <Compile Include="ViewModels\GameCreationViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\InventoryViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\TickConfigViewModel.cs" />
+    <Compile Include="ViewModels\TileConfigViewModel.cs" />
+    <Compile Include="ViewModels\TileDropViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
+    <Compile Include="Views\GameCreationView.xaml.cs">
+      <DependentUpon>GameCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GameView.xaml.cs">
       <DependentUpon>GameView.xaml</DependentUpon>
     </Compile>
@@ -92,6 +107,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\GameCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -159,8 +178,8 @@
     <Resource Include="Images\tile_0024.png" />
     <Resource Include="Images\tile_0025.png" />
     <Resource Include="Images\tile_0026.png" />
-    <Resource Include="Images\tile_0027.png" />
-    <Resource Include="Images\tile_0028.png" />
+    <Resource Include="Images\TreeB.png" />
+    <Resource Include="Images\TreeA.png" />
     <Resource Include="Images\Mushroom.png" />
     <Resource Include="Images\tile_0030.png" />
     <Resource Include="Images\tile_0031.png" />
@@ -176,89 +195,20 @@
     <Resource Include="Images\tile_0041.png" />
     <Resource Include="Images\tile_0042.png" />
     <Resource Include="Images\tile_0043.png" />
-    <Resource Include="Images\tile_0044.png" />
-    <Resource Include="Images\tile_0045.png" />
-    <Resource Include="Images\tile_0046.png" />
-    <Resource Include="Images\tile_0047.png" />
-    <Resource Include="Images\tile_0048.png" />
-    <Resource Include="Images\tile_0049.png" />
-    <Resource Include="Images\tile_0050.png" />
-    <Resource Include="Images\tile_0051.png" />
-    <Resource Include="Images\tile_0052.png" />
-    <Resource Include="Images\tile_0053.png" />
-    <Resource Include="Images\tile_0054.png" />
-    <Resource Include="Images\tile_0055.png" />
-    <Resource Include="Images\tile_0056.png" />
     <Resource Include="Images\tile_0057.png" />
-    <Resource Include="Images\tile_0058.png" />
-    <Resource Include="Images\tile_0059.png" />
-    <Resource Include="Images\tile_0060.png" />
-    <Resource Include="Images\tile_0061.png" />
-    <Resource Include="Images\tile_0062.png" />
-    <Resource Include="Images\tile_0063.png" />
-    <Resource Include="Images\tile_0064.png" />
-    <Resource Include="Images\tile_0065.png" />
-    <Resource Include="Images\tile_0066.png" />
-    <Resource Include="Images\tile_0067.png" />
-    <Resource Include="Images\tile_0068.png" />
-    <Resource Include="Images\tile_0069.png" />
-    <Resource Include="Images\tile_0070.png" />
-    <Resource Include="Images\tile_0071.png" />
-    <Resource Include="Images\tile_0072.png" />
-    <Resource Include="Images\tile_0073.png" />
-    <Resource Include="Images\tile_0074.png" />
-    <Resource Include="Images\tile_0075.png" />
-    <Resource Include="Images\tile_0076.png" />
-    <Resource Include="Images\tile_0077.png" />
-    <Resource Include="Images\tile_0078.png" />
-    <Resource Include="Images\tile_0079.png" />
-    <Resource Include="Images\tile_0080.png" />
-    <Resource Include="Images\tile_0081.png" />
-    <Resource Include="Images\tile_0082.png" />
     <Resource Include="Images\tile_0083.png" />
-    <Resource Include="Images\tile_0084.png" />
-    <Resource Include="Images\tile_0085.png" />
-    <Resource Include="Images\tile_0086.png" />
-    <Resource Include="Images\tile_0087.png" />
-    <Resource Include="Images\tile_0088.png" />
-    <Resource Include="Images\tile_0089.png" />
-    <Resource Include="Images\tile_0090.png" />
-    <Resource Include="Images\tile_0091.png" />
-    <Resource Include="Images\tile_0092.png" />
     <Resource Include="Images\Coin.png" />
-    <Resource Include="Images\tile_0094.png" />
+    <Resource Include="Images\Honey.png" />
     <Resource Include="Images\tile_0095.png" />
-    <Resource Include="Images\tile_0096.png" />
-    <Resource Include="Images\tile_0097.png" />
-    <Resource Include="Images\tile_0098.png" />
-    <Resource Include="Images\tile_0099.png" />
-    <Resource Include="Images\tile_0100.png" />
-    <Resource Include="Images\tile_0101.png" />
-    <Resource Include="Images\tile_0102.png" />
-    <Resource Include="Images\tile_0103.png" />
     <Resource Include="Images\tile_0104.png" />
     <Resource Include="Images\tile_0105.png" />
     <Resource Include="Images\Wood.png" />
     <Resource Include="Images\tile_0107.png" />
-    <Resource Include="Images\tile_0108.png" />
-    <Resource Include="Images\tile_0109.png" />
-    <Resource Include="Images\tile_0110.png" />
-    <Resource Include="Images\tile_0111.png" />
-    <Resource Include="Images\tile_0112.png" />
-    <Resource Include="Images\tile_0113.png" />
-    <Resource Include="Images\tile_0114.png" />
     <Resource Include="Images\tile_0115.png" />
     <Resource Include="Images\tile_0116.png" />
     <Resource Include="Images\tile_0117.png" />
     <Resource Include="Images\tile_0118.png" />
     <Resource Include="Images\tile_0119.png" />
-    <Resource Include="Images\tile_0120.png" />
-    <Resource Include="Images\tile_0121.png" />
-    <Resource Include="Images\tile_0122.png" />
-    <Resource Include="Images\tile_0123.png" />
-    <Resource Include="Images\tile_0124.png" />
-    <Resource Include="Images\tile_0125.png" />
-    <Resource Include="Images\tile_0126.png" />
     <Resource Include="Images\tile_0127.png" />
     <Resource Include="Images\tile_0128.png" />
     <Resource Include="Images\tile_0129.png" />

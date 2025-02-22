@@ -8,6 +8,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Title="MenuView">
+    <Page.DataContext>
+        <vm:MenuViewModel/>
+    </Page.DataContext>
     <Page.Resources>
         <Style x:Key="AnimatedButtonStyle" TargetType="Button">
             <Style.Setters>

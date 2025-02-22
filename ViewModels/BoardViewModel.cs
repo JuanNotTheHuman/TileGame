@@ -79,27 +79,29 @@ namespace TileGame.ViewModels
         {
             try
             {
-                int totalTransforms = 0;
-                var spawnableTiles = Tiles.Where(tile => Config.Tiles.ForegroundGeneration.Any(c => c.Value.SpawnableOn.Contains(tile.Type)) && TilesAt(tile.X, tile.Y).Count == 1).ToList();
-                foreach (var entry in Config.Tiles.ForegroundGeneration)
+                var entries = Config.Tiles.ForegroundGeneration.Select(r =>{
+                        int currentCount = Tiles.Count(t => t.Type == r.Key);
+                        double adjustedChance = r.Value.SpawnChance * (1 - (double)currentCount / r.Value.Max);
+                        return new WeightedRandomItem<KeyValuePair<TileType, ForegroundTileConfig>>(r, Math.Max(adjustedChance,0));
+                    }).ToList();
+                for (int i = 0; i < Config.Tick.MaxTransform; i++)
                 {
+                    if (entries.Count == 0) break;
+                    var entry = WeightedRandom.GetRandom(entries, _random);
                     var type = entry.Key;
                     var config = entry.Value;
-                    int currentCount = Tiles.Count(r => r.Type == type);
-                    if (currentCount >= config.Max) continue;
-                    double adjustedSpawnChance = config.SpawnChance * (1 - (double)currentCount / config.Max);
-                    for (int i = 0; i < Config.Tick.MaxTransform; i++)
+                    int currentCount = Tiles.Count(t => t.Type == entry.Key);
+                    double adjustedChance = config.SpawnChance * (1 - (double)currentCount / config.Max);
+                    if (adjustedChance < 0) continue;
+                    if(adjustedChance<_random.NextDouble())continue;
+                    var spawnableTiles = Tiles.Where(t => config.SpawnableOn.Contains(t.Type) && TilesAt(t.X, t.Y).Count == 1).ToList();
+                    if (spawnableTiles.Count == 0) continue;
+                    var tile = spawnableTiles[_random.Next(spawnableTiles.Count)];
+                    if (config.SpawnBehavior == SpawnBehavior.Random ||
+                        (config.SpawnBehavior == SpawnBehavior.Spread && CanSpread(tile)))
                     {
-                        if (totalTransforms >= Config.Tick.MaxTransform) break;
-                        var tile = spawnableTiles[_random.Next(spawnableTiles.Count)];
-                        if (adjustedSpawnChance < _random.NextDouble()) continue;
-                        if (config.SpawnBehavior == SpawnBehavior.Random || (config.SpawnBehavior == SpawnBehavior.Spread && CanSpread(tile)))
-                        {
-                            RenderQueue.Add(new TileViewModel(new Tile(type, config.Health, tile.X, tile.Y)));
-                            totalTransforms++;
-                        }
+                        RenderQueue.Add(new TileViewModel(new Tile(type, config.Health, tile.X, tile.Y)));
                     }
-                    if (totalTransforms >= Config.Tick.MaxTransform) break;
                 }
                 if (RenderQueue.Count > 0) await AddTilesToDisplay();
             }
@@ -108,5 +110,6 @@ namespace TileGame.ViewModels
                 Debug.WriteLine($"Error in Tick: {ex}");
             }
         }
+
     }
 }

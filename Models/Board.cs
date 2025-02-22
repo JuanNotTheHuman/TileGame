@@ -41,7 +41,7 @@ public class Board
             new WeightedRandomItem<TileType>(TileType.GrassC, Config.Tiles.BaseGeneration[TileType.GrassC].SpawnChance),
         };
 
-        var random = new Random();
+        var random = new Random(Config.Seed);
         for (int i = 0; i < totalTiles; i++)
         {
             int row = i / columns;

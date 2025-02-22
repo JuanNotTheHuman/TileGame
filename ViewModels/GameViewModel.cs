@@ -79,7 +79,12 @@ namespace TileGame.ViewModels
             TileClick = new RelayCommand<TileViewModel>(BoardTileClicked);
             PlayerViewModel = new PlayerViewModel(new Player());
         }
-
+        public GameViewModel()
+        {
+            Config = new Config();
+            TileClick = new RelayCommand<TileViewModel>(BoardTileClicked);
+            PlayerViewModel = new PlayerViewModel(new Player());
+        }
         public static async Task<GameViewModel> CreateAsync()
         {
 

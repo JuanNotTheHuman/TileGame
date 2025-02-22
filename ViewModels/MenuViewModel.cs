@@ -7,7 +7,7 @@ namespace TileGame.ViewModels
     {
         private readonly INavigationService _navigationService;
 
-        public ICommand StartNewGameCommand { get; }
+        public ICommand StartNewGameCommand { get; set; }
 
         public MenuViewModel(INavigationService navigationService)
         {
@@ -19,6 +19,15 @@ namespace TileGame.ViewModels
         {
             _navigationService.NavigateToPage(new GameView());
         }
+        public MenuViewModel()
+        {
+            if (App.Current.MainWindow is MainWindow mainWindow)
+            {
+                _navigationService = new NavigationService(mainWindow.MainFrame);
+            }
+            StartNewGameCommand = new RelayCommand<object>(CreateGame);
+        }
+
     }
 }
 
