@@ -1,20 +1,23 @@
 ﻿using System.Windows.Controls;
-
-public interface INavigationService
+namespace TileGame.Services
 {
-    void NavigateToPage(Page page);
-}
-public class NavigationService : INavigationService
-{
-    private readonly Frame _frame;
-
-    public NavigationService(Frame frame)
+    public interface INavigationService
     {
-        _frame = frame;
+        void NavigateToPage(Page page);
     }
-
-    public void NavigateToPage(Page page)
+    public class NavigationService : INavigationService
     {
-        _frame.Navigate(page);
+        private readonly Frame _frame;
+
+        public NavigationService(Frame frame)
+        {
+            _frame = frame;
+        }
+
+        public void NavigateToPage(Page page)
+        {
+            _frame.Navigate(page);
+        }
     }
 }
+

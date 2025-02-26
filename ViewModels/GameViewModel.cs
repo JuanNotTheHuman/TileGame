@@ -14,12 +14,13 @@ using System.Windows.Threading;
 using TileGame.Enums;
 using TileGame.Helpers;
 using TileGame.Models;
+using TileGame.Services;
 namespace TileGame.ViewModels
 {
-    public class GameViewModel : INotifyPropertyChanged
+    public class GameViewModel : ViewModelBase
     {
-        public bool IsLoading { get; private set; }
         private BoardViewModel _board;
+        private readonly DispatcherTimer _timer = new DispatcherTimer();
         private PlayerViewModel _player;
         public PlayerViewModel PlayerViewModel
         {
@@ -99,12 +100,22 @@ namespace TileGame.ViewModels
             TileClick = new RelayCommand<TileViewModel>(BoardTileClicked);
             PlayerViewModel = new PlayerViewModel(new Player());
         }
+        public static async Task<GameViewModel> CreateAsync(GameSave save)
+        {
+            GameViewModel viewModel = new GameViewModel(save.Board.Config);
+            Board board = await Board.CreateAsync(1920, 1080, save.Board.Config);
+            viewModel.PlayerViewModel = new PlayerViewModel(save.Player);
+            viewModel.BoardViewModel = new BoardViewModel(board);
+            viewModel.InitializeTick();
+            return viewModel;
+        }
         public static async Task<GameViewModel> CreateAsync()
         {
             var config = new Config();
             var gameViewModel = new GameViewModel(config);
             var board = await Board.CreateAsync(1920, 1080, config);
-            gameViewModel.BoardViewModel = new BoardViewModel(board,config);
+            gameViewModel.BoardViewModel = new BoardViewModel(board);
+            gameViewModel.InitializeTick();
             return gameViewModel;
         }
         public static async Task<GameViewModel> CreateAsync(Config config)
@@ -112,13 +123,21 @@ namespace TileGame.ViewModels
 
             var gameViewModel = new GameViewModel(config);
             var board = await Board.CreateAsync(1920, 1080, config);
-            gameViewModel.BoardViewModel = new BoardViewModel(board, config);
+            gameViewModel.BoardViewModel = new BoardViewModel(board);
+            gameViewModel.InitializeTick();
             return gameViewModel;
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        public void InitializeTick()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _timer.Interval = new TimeSpan(Config.Tick.Interval);
+            _timer.Tick += Tick;
+            _timer.Start();
+        }
+        private void Tick(object sender,EventArgs e)
+        {
+            var playerData = PlayerViewModel.ToPlayer();
+            var boardData = BoardViewModel.ToBoard();
+            GameSaveService.Save(GameSaveService.Current.Name, new GameSave(GameSaveService.Current.Name, playerData, boardData));
         }
     }
 }

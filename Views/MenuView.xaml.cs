@@ -10,9 +10,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TileGame.Factories;
+using TileGame.Services;
 using TileGame.ViewModels;
 
 namespace TileGame.Views
@@ -27,6 +26,7 @@ namespace TileGame.Views
             InitializeComponent();
             var navigationService = new NavigationService(((MainWindow)App.Current.MainWindow).MainFrame);
             DataContext = new MenuViewModel(navigationService);
+            ((MainWindow)App.Current.MainWindow).ViewModel = DataContext as MenuViewModel;
         }
     }
 }

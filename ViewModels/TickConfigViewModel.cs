@@ -8,9 +8,8 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TickConfigViewModel : INotifyPropertyChanged
+    public class TickConfigViewModel : ViewModelBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private TickConfig _tickConfig;
         private int _interval;
         private int _maxtransform;
@@ -37,10 +36,6 @@ namespace TileGame.ViewModels
                     OnPropertyChanged(nameof(MaxTransform));
                 }
             }
-        }
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public TickConfigViewModel(TickConfig tickConfig)
         {

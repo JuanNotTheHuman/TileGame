@@ -17,15 +17,21 @@ using TileGame.ViewModels;
 namespace TileGame.Views
 {
     /// <summary>
-    /// Logika interakcji dla klasy GameCreationView.xaml
+    /// Logika interakcji dla klasy TradeView.xaml
     /// </summary>
-    public partial class GameCreationView : Page
+    public partial class TradeView : Page
     {
-        public GameCreationView()
+        public TradeView()
         {
             InitializeComponent();
-            DataContext = new GameCreationViewModel();
-            ((MainWindow)App.Current.MainWindow).ViewModel = DataContext as GameCreationViewModel;
+            DataContext = new TradeViewViewModel();
+            (App.Current.MainWindow as MainWindow).ViewModel = DataContext as TradeViewViewModel;
+        }
+        public TradeView(PlayerViewModel player)
+        {
+            InitializeComponent();
+            DataContext = new TradeViewViewModel(player);
+            (App.Current.MainWindow as MainWindow).ViewModel = DataContext as TradeViewViewModel;
         }
     }
 }

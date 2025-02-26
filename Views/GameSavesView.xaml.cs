@@ -17,15 +17,14 @@ using TileGame.ViewModels;
 namespace TileGame.Views
 {
     /// <summary>
-    /// Logika interakcji dla klasy GameCreationView.xaml
+    /// Logika interakcji dla klasy GameSavesView.xaml
     /// </summary>
-    public partial class GameCreationView : Page
+    public partial class GameSavesView : Page
     {
-        public GameCreationView()
+        public GameSavesView()
         {
             InitializeComponent();
-            DataContext = new GameCreationViewModel();
-            ((MainWindow)App.Current.MainWindow).ViewModel = DataContext as GameCreationViewModel;
+            ((MainWindow)App.Current.MainWindow).ViewModel = DataContext as GameSavesViewModel;
         }
     }
 }

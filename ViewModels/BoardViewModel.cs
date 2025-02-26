@@ -10,21 +10,32 @@ using System.Windows;
 using System.Windows.Threading;
 using TileGame.Enums;
 using TileGame.Models;
+using TileGame.Services;
 
 namespace TileGame.ViewModels
 {
-    public class BoardViewModel : INotifyPropertyChanged
+    public class BoardViewModel : ViewModelBase
     {
         public int Seed;
         private Random _random;
         private readonly DispatcherTimer _timer = new DispatcherTimer();
         private int _score;
-
+        private double _daytime;
+        public double DayTime
+        {
+            get => _daytime;
+            set
+            {
+                if (_daytime != value)
+                {
+                    _daytime = value;
+                    OnPropertyChanged(nameof(DayTime));
+                }
+            }
+        }
         public Board Board { get; }
-        private Config Config { get; }
         public ObservableCollection<TileViewModel> Tiles { get; }
         public Collection<TileViewModel> RenderQueue { get; } = new Collection<TileViewModel>();
-
         public int Score
         {
             get => _score;
@@ -33,25 +44,21 @@ namespace TileGame.ViewModels
                 if (_score != value)
                 {
                     _score = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Score));
                 }
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        public BoardViewModel(Board board, Config config)
+        public BoardViewModel(Board board)
         {
-            Config = config;
             Board = board;
             Tiles = new ObservableCollection<TileViewModel>(
                 board.TileGrid.Select(tile => new TileViewModel(tile))
             );
+            DayTime = 0;
             Seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
             _random = new Random(Seed);
-            _timer.Interval = TimeSpan.FromMilliseconds(Config.Tick.Interval);
+            _timer.Interval = TimeSpan.FromMilliseconds(Board.Config.Tick.Interval);
             _timer.Tick += async (sender, e) => await Tick();
             _timer.Start();
         }
@@ -79,12 +86,12 @@ namespace TileGame.ViewModels
         {
             try
             {
-                var entries = Config.Tiles.ForegroundGeneration.Select(r =>{
+                var entries = Board.Config.Tiles.ForegroundGeneration.Select(r =>{
                         int currentCount = Tiles.Count(t => t.Type == r.Key);
                         double adjustedChance = r.Value.SpawnChance * (1 - (double)currentCount / r.Value.Max);
                         return new WeightedRandomItem<KeyValuePair<TileType, ForegroundTileConfig>>(r, Math.Max(adjustedChance,0));
                     }).ToList();
-                for (int i = 0; i < Config.Tick.MaxTransform; i++)
+                for (int i = 0; i < Board.Config.Tick.MaxTransform; i++)
                 {
                     if (entries.Count == 0) break;
                     var entry = WeightedRandom.GetRandom(entries, _random);
@@ -104,11 +111,25 @@ namespace TileGame.ViewModels
                     }
                 }
                 if (RenderQueue.Count > 0) await AddTilesToDisplay();
+                DayTime += 0.001;
+                if(DayTime >= 1)
+                {
+                    //Trigger trading view
+                    while (DayTime >= 0)
+                    {
+                        DayTime -= 0.001;
+                        await Task.Delay(5);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in Tick: {ex}");
             }
+        }
+        public Board ToBoard()
+        {
+            return new Board(Board.Config, new ObservableCollection<Tile>(Tiles.Select(tvm => tvm.ToTile())));
         }
 
     }

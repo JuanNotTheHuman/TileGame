@@ -10,9 +10,8 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class ConfigViewModel : INotifyPropertyChanged
+    public class ConfigViewModel : ViewModelBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public ICommand RandomizeSeed { get; }
         private int _seed;
         private Config _config;
@@ -60,10 +59,6 @@ namespace TileGame.ViewModels
                     OnPropertyChanged(nameof(Seed));
                 }
             }
-        }
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public ConfigViewModel(Config config)
         {

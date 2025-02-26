@@ -11,6 +11,7 @@ using TileGame.Enums;
 
 namespace TileGame.Models
 {
+    [Serializable]
     public class Tile
     {
         public TileType Type { get; set; }
@@ -29,6 +30,11 @@ namespace TileGame.Models
                     return TileCategory.Grass;
                 case TileType.Bush:
                     return TileCategory.Bush;
+                case TileType.Mushrooms:
+                    return TileCategory.Other;
+                case TileType.TreeA:
+                case TileType.TreeB:
+                    return TileCategory.Tree;
                 default:
                     throw new NotImplementedException();
             }
@@ -55,6 +61,10 @@ namespace TileGame.Models
         public static bool Collides(Tile a, Tile b)
         {
             return ((a.X==b.X) && (a.Y==b.Y));
+        }
+        public override string ToString()
+        {
+            return $"Type:{Type}, Health:{Health}, X:{X}, Y:{Y}";
         }
     }
 }

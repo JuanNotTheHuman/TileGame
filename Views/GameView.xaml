@@ -43,6 +43,9 @@
         <SolidColorBrush Color="Black"/>
     </Page.Background>
     <Grid>
+        <Grid Panel.ZIndex="5" x:Name="DayTimeDisplay">
+            <Rectangle Fill="Black" Opacity="{Binding BoardViewModel.DayTime}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+        </Grid>
         <Canvas>
             <ItemsControl x:Name="tiles" ItemsSource="{Binding BoardViewModel.Tiles}">
                 <ItemsControl.ItemContainerStyle>
@@ -68,7 +71,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <ItemsControl x:Name="playerItems" ItemsSource="{Binding PlayerViewModel.Inventory.Items}" Panel.ZIndex="1">
+            <ItemsControl ItemsSource="{Binding PlayerViewModel.Inventory.Items}" Panel.ZIndex="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" Width="1920">

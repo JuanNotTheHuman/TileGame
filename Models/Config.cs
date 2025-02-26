@@ -5,11 +5,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TileGame.Enums;
+using TileGame.Helpers;
 
 namespace TileGame.Models
 {
+    [Serializable]
     public class Config
     {
         public int Seed { get; set; }
@@ -26,6 +29,7 @@ namespace TileGame.Models
             Tiles = tiles;
         }
     }
+    [Serializable]
     public class TickConfig
     {
         public int Interval { get; set; }
@@ -40,6 +44,7 @@ namespace TileGame.Models
             MaxTransform = 15;
         }
     }
+    [Serializable]
     public class TileConfig
     {
         public Dictionary<TileType, BaseTileConfig> BaseGeneration { get; set; } 
@@ -121,43 +126,58 @@ namespace TileGame.Models
             ForegroundGeneration = foregroundGeneration;
         }
     }
+    [Serializable]
     public class BaseTileConfig
     {
+        [JsonConverter(typeof(DoubleConverter))]
         public double SpawnChance { get; set; }
+        [JsonConverter(typeof(DoubleConverter))]
         public double Health { get; set; }
-        public Dictionary<ItemType,int> ClickDrops { get; set; }
+        public Dictionary<ItemType, int> ClickDrops { get; set; }
         public Dictionary<ItemType, int> DeathDrops { get; set; }
-        public BaseTileConfig(double spawnChance, double health,Dictionary<ItemType,int> clickDrops, Dictionary<ItemType, int> deathDrops)
+        public BaseTileConfig() { }
+        public BaseTileConfig(double spawnChance, double health, Dictionary<ItemType, int> clickDrops, Dictionary<ItemType, int> deathDrops)
         {
             SpawnChance = spawnChance;
             Health = health;
-            DeathDrops = deathDrops;
             ClickDrops = clickDrops;
+            DeathDrops = deathDrops;
         }
+
         public BaseTileConfig(double spawnChance, double health)
         {
             SpawnChance = spawnChance;
             Health = health;
         }
     }
+    [Serializable]
     public class ForegroundTileConfig : BaseTileConfig
     {
         public int Max { get; set; }
         public Collection<TileType> SpawnableOn { get; set; }
         public SpawnBehavior SpawnBehavior { get; set; }
-        public ForegroundTileConfig(Collection<TileType> spawnableOn,SpawnBehavior spawnBehavior, double spawnChance, double health, int max, Dictionary<ItemType, int> clickDrops, Dictionary<ItemType, int> deathDrops) : base(spawnChance, health,clickDrops,deathDrops)
+
+        [JsonConstructor]
+        public ForegroundTileConfig() { }
+
+        public ForegroundTileConfig(Collection<TileType> spawnableOn, SpawnBehavior spawnBehavior, double spawnChance, double health, int max, Dictionary<ItemType, int> clickDrops, Dictionary<ItemType, int> deathDrops)
+            : base(spawnChance, health, clickDrops, deathDrops)
         {
             SpawnBehavior = spawnBehavior;
             SpawnableOn = spawnableOn;
             Max = max;
         }
-        public ForegroundTileConfig(Collection<TileType> spawnableOn, double spawnChance, double health, int max, Dictionary<ItemType, int> clickDrops, Dictionary<ItemType, int> deathDrops) : base(spawnChance, health, clickDrops, deathDrops)
+
+        public ForegroundTileConfig(Collection<TileType> spawnableOn, double spawnChance, double health, int max, Dictionary<ItemType, int> clickDrops, Dictionary<ItemType, int> deathDrops)
+            : base(spawnChance, health, clickDrops, deathDrops)
         {
             SpawnBehavior = SpawnBehavior.Random;
             SpawnableOn = spawnableOn;
             Max = max;
         }
-        public ForegroundTileConfig(Collection<TileType> spawnableOn, double spawnChance, double health, int max) : base(spawnChance, health)
+
+        public ForegroundTileConfig(Collection<TileType> spawnableOn, double spawnChance, double health, int max)
+            : base(spawnChance, health)
         {
             SpawnBehavior = SpawnBehavior.Random;
             SpawnableOn = spawnableOn;

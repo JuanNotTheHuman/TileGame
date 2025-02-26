@@ -7,7 +7,7 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TileViewModel : INotifyPropertyChanged
+    public class TileViewModel : ViewModelBase
     {
         public Tile Tile { get; }
         public TileViewModel(Tile tile)
@@ -71,10 +71,9 @@ namespace TileGame.ViewModels
         {
             get => Tile.Size;
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        public virtual void OnPropertyChanged(string propertyName)
+        public Tile ToTile()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return new Tile(Type, Health, X, Y);
         }
     }
 }

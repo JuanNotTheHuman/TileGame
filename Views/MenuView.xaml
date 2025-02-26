@@ -92,7 +92,7 @@
                 <TextBlock Text="TileGame" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="60" FontWeight="Bold" TextAlignment="Center" Margin="845,90,0,0"/>
             </Grid>
             <Button Style="{StaticResource AnimatedButtonStyle}" Content="New game" Margin="0,0,0,5" Command="{Binding StartNewGameCommand}"/>
-            <Button Style="{StaticResource AnimatedButtonStyle}" Content="Continue game" IsEnabled="False"/>
+            <Button Style="{StaticResource AnimatedButtonStyle}" Content="Continue game" Command="{Binding ContinueGameCommand}"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
+
 namespace TileGame.Helpers
 {
-    public class ObservableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, INotifyCollectionChanged
+    [Serializable]
+    public class ObservableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, INotifyCollectionChanged, ISerializable
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -39,7 +42,6 @@ namespace TileGame.Helpers
             }
             return false;
         }
-
         public ObservableDictionary() : base() { }
 
         public ObservableDictionary(IDictionary<TKey, TValue> dictionary) : base(dictionary)
@@ -52,6 +54,21 @@ namespace TileGame.Helpers
             base.Clear();
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
+        protected ObservableDictionary(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            var items = (List<KeyValuePair<TKey, TValue>>)info.GetValue("Items", typeof(List<KeyValuePair<TKey, TValue>>));
+            foreach (var item in items)
+            {
+                Add(item.Key, item.Value);
+            }
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            var items = new List<KeyValuePair<TKey, TValue>>(this);
+            info.AddValue("Items", items);
+        }
+
         private void NotifyReset()
         {
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));

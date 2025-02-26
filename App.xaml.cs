@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
+using TileGame.Services;
+using TileGame.ViewModels;
+using TileGame.Views;
 
 namespace TileGame
 {

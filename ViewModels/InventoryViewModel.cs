@@ -12,7 +12,7 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class InventoryViewModel : INotifyPropertyChanged
+    public class InventoryViewModel : ViewModelBase
     {
         private Inventory Inventory { get; }
         private ObservableDictionary<ItemType,ItemViewModel> _items;
@@ -35,10 +35,9 @@ namespace TileGame.ViewModels
                 inventory.Items.ToDictionary(r => r.Key, r => new ItemViewModel(r.Value))
             );
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        public Inventory ToInventory()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return new Inventory(Items.ToDictionary(r => r.Key, r => r.Value.ToItem()));
         }
     }
 }

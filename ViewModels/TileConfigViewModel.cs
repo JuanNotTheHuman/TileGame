@@ -11,16 +11,10 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TileConfigViewModel : INotifyPropertyChanged
+    public class TileConfigViewModel :ViewModelBase
     {
         private ObservableDictionary<TileType, BaseTileConfigViewModel> _baseGeneration;
         private ObservableDictionary<TileType, ForegroundTileConfigViewModel> _foregroundGeneration;
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public ObservableDictionary<TileType, BaseTileConfigViewModel> BaseGeneration
         {
             get { return _baseGeneration; }

@@ -9,7 +9,7 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class ItemViewModel : INotifyPropertyChanged
+    public class ItemViewModel : ViewModelBase
     {
         public Item Item { get; }
         public string Description
@@ -33,10 +33,9 @@ namespace TileGame.ViewModels
             Item = item;
             Count = item.Count;
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        public Item ToItem()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));  
+            return new Item(Item.Description, Item.Count);
         }
     }
 }

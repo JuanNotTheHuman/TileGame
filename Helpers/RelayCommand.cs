@@ -8,6 +8,7 @@ namespace TileGame
     {
         private readonly Action<T> _execute;
         private readonly Func<T, bool> _canExecute;
+        public event EventHandler CanExecuteChanged;
 
         public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
         {
@@ -15,20 +16,29 @@ namespace TileGame
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object parameter=null)
         {
-            return _canExecute == null || _canExecute((T)parameter);
-        }
+            bool result = false;
+            if(parameter == null)
+            {
+                result = _canExecute == null || _canExecute(default);
+            }
+            else if (parameter is T typedParameter)
+            {
+                result = _canExecute == null || _canExecute(typedParameter);
 
+            }
+            return result;
+        }
         public void Execute(object parameter)
         {
-            _execute((T)parameter);
+            if (parameter is T typedParameter)
+                _execute(typedParameter);
         }
 
-        public event EventHandler CanExecuteChanged
+        public void RaiseCanExecuteChanged()
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

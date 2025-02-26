@@ -13,7 +13,7 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class BaseTileConfigViewModel : INotifyPropertyChanged
+    public class BaseTileConfigViewModel : ViewModelBase
     {
         private BaseTileConfig _config;
         private ObservableDictionary<ItemType, int> _clickDrops;
@@ -65,11 +65,6 @@ namespace TileGame.ViewModels
                     OnPropertyChanged(nameof(DeathDrops));
                 }
             }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public BaseTileConfigViewModel(BaseTileConfig config)
         {
