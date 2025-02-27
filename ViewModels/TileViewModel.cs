@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,65 +8,47 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TileViewModel : ViewModelBase
+    public class TileViewModel : ObservableObject
     {
-        public Tile Tile { get; }
+        [ObservableProperty]
+        private double health;
+        [ObservableProperty]
+        private TileType type;
+        [ObservableProperty]
+        private double x;
+        [ObservableProperty]
+        private double y;
         public TileViewModel(Tile tile)
         {
-            Tile = tile;
+            Health = tile.Health;
+            Type = tile.Type;
+            X = tile.X;
+            Y = tile.Y;
         }
         public double Health
         {
-            get => Tile.Health;
-            set
-            {
-                if (Tile.Health != value)
-                {
-                    Tile.Health = value;
-                    OnPropertyChanged(nameof(Health));
-                }
-            }
+            get => health;
+            set=>SetProperty(ref health, value);
         }
         public TileType Type
         {
-            get => Tile.Type;
-            set
-            {
-                if (Tile.Type != value)
-                {
-                    Tile.Type = value;
-                    OnPropertyChanged(nameof(Type));
-                }
-            }
+            get => type;
+            set => SetProperty(ref type, value);
         }
 
         public TileCategory Category
         {
-            get => Tile.Category;
+            get => Tile.GetTileCategory(Type);
         }
         public double X
         {
-            get => Tile.X;
-            set
-            {
-                if (Tile.X != value)
-                {
-                    Tile.X = value;
-                    OnPropertyChanged(nameof(X));
-                }
-            }
+            get => x;
+            set => SetProperty(ref x, value);
         }
         public double Y
         {
-            get => Tile.Y;
-            set
-            {
-                if (Tile.Y != value)
-                {
-                    Tile.Y = value;
-                    OnPropertyChanged(nameof(Y));
-                }
-            }
+            get => y;
+            set => SetProperty(ref y, value);
         }
         public int Size
         {

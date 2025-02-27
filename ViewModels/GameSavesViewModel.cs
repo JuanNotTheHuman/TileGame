@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,18 +14,15 @@ using TileGame.Views;
 
 namespace TileGame.ViewModels
 {
-    public class GameSavesViewModel : ViewModelBase
+    public class GameSavesViewModel : ObservableObject
     {
         private NavigationService _navigationService { get; }
+        [ObservableProperty]
         private ObservableCollection<KeyValuePair<string, GameSaveViewModel>> _games;
         public ObservableCollection<KeyValuePair<string, GameSaveViewModel>> Games
         {
-            get { return _games; }
-            set
-            {
-                _games = value;
-                OnPropertyChanged(nameof(Games));
-            }
+            get => _games;
+            set => SetProperty(ref _games, value);
         }
         public ICommand LoadGameCommand { get; }
         public ICommand DeleteGameCommand { get; }
@@ -45,8 +43,7 @@ namespace TileGame.ViewModels
         public void DeleteGame(GameSaveViewModel game)
         {
             GameSaveService.DeleteSave(game.Name);
-            _games.Remove(_games.First(pair => pair.Key == game.Name));
-            OnPropertyChanged(nameof(Games));
+            Games.Remove(Games.First(pair => pair.Key == game.Name));
         }
         public void Cancel(object source = null)
         {

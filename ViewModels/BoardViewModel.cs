@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,24 +15,19 @@ using TileGame.Services;
 
 namespace TileGame.ViewModels
 {
-    public class BoardViewModel : ViewModelBase
+    public class BoardViewModel : ObservableObject
     {
         public int Seed;
         private Random _random;
         private readonly DispatcherTimer _timer = new DispatcherTimer();
+        [ObservableProperty]
         private int _score;
+        [ObservableProperty]
         private double _daytime;
         public double DayTime
         {
             get => _daytime;
-            set
-            {
-                if (_daytime != value)
-                {
-                    _daytime = value;
-                    OnPropertyChanged(nameof(DayTime));
-                }
-            }
+            set=> SetProperty(ref _daytime, value);
         }
         public Board Board { get; }
         public ObservableCollection<TileViewModel> Tiles { get; }
@@ -39,16 +35,8 @@ namespace TileGame.ViewModels
         public int Score
         {
             get => _score;
-            set
-            {
-                if (_score != value)
-                {
-                    _score = value;
-                    OnPropertyChanged(nameof(Score));
-                }
-            }
+            set => SetProperty(ref _score, value);
         }
-
         public BoardViewModel(Board board)
         {
             Board = board;
@@ -80,7 +68,6 @@ namespace TileGame.ViewModels
                 Tiles.Add(tile);
                 await Task.Delay(5);
             }
-            OnPropertyChanged(nameof(Tiles));
         }
         private async Task Tick()
         {

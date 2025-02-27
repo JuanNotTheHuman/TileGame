@@ -9,29 +9,22 @@ using System.Threading.Tasks;
 using TileGame.Helpers;
 using TileGame.Enums;
 using TileGame.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TileGame.ViewModels
 {
-    public class InventoryViewModel : ViewModelBase
+    public class InventoryViewModel : ObservableObject
     {
-        private Inventory Inventory { get; }
+        [ObservableProperty]
         private ObservableDictionary<ItemType,ItemViewModel> _items;
         public ObservableDictionary<ItemType, ItemViewModel> Items
         {
             get => _items;
-            set
-            {
-                if(_items != value)
-                {
-                    _items = value;
-                    OnPropertyChanged(nameof(Items));
-                }
-            }
+            set => SetProperty(ref _items, value);
         }
         public InventoryViewModel(Inventory inventory)
         {
-            Inventory = inventory;
-            _items = new ObservableDictionary<ItemType, ItemViewModel>(
+            Items = new ObservableDictionary<ItemType, ItemViewModel>(
                 inventory.Items.ToDictionary(r => r.Key, r => new ItemViewModel(r.Value))
             );
         }

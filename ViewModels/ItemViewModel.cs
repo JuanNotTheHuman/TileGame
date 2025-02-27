@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,33 +10,30 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class ItemViewModel : ViewModelBase
+    public class ItemViewModel : ObservableObject
     {
-        public Item Item { get; }
+        [ObservableProperty]
+        private string _description;
+        [ObservableProperty]
+        private int _count;
         public string Description
         {
-            get => Item.Description;
+            get => _description;
+            private set => SetProperty(ref _description, value);
         }
         public int Count
         {
-            get => Item.Count;
-            set
-            {
-                if(Item.Count != value)
-                {
-                    Item.Count = value;
-                    OnPropertyChanged(nameof(Count));
-                }
-            }
+            get => _count;
+            set => SetProperty(ref _count, value);
         }
         public ItemViewModel(Item item)
         {
-            Item = item;
+            Description = item.Description;
             Count = item.Count;
         }
         public Item ToItem()
         {
-            return new Item(Item.Description, Item.Count);
+            return new Item(Description, Count);
         }
     }
 }

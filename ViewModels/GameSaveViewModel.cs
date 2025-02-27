@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,52 +12,34 @@ using TileGame.Services;
 
 namespace TileGame.ViewModels
 {
-    public class GameSaveViewModel : ViewModelBase
+    public class GameSaveViewModel : ObservableObject
     {
-        private GameSave _gameSave;
+        [ObservableProperty]
         private PlayerViewModel _playerViewModel;
+        [ObservableProperty]
         private BoardViewModel _boardViewModel;
+        [ObservableProperty]
+        private string _name;
         public string Name
         {
-            get { return _gameSave.Name; }
-            set
-            {
-                if (_gameSave.Name != value)
-                {
-                    _gameSave.Name = value;
-                    OnPropertyChanged(nameof(Name));
-                }
-            }
+            get => _name;
+            set=>SetProperty(ref _name, value);
         }
         public PlayerViewModel Player
         {
-            get { return _playerViewModel; }
-            set
-            {
-                if (_playerViewModel != value)
-                {
-                    _playerViewModel = value;
-                    OnPropertyChanged(nameof(Player));
-                }
-            }
+            get=> _playerViewModel;
+            set=>SetProperty(ref _playerViewModel, value);
         }
         public BoardViewModel Board
         {
-            get { return _boardViewModel; }
-            set
-            {
-                if (_boardViewModel != value)
-                {
-                    _boardViewModel = value;
-                    OnPropertyChanged(nameof(Board));
-                }
-            }
+            get => _boardViewModel;
+            set => SetProperty(ref _boardViewModel, value);
         }
         public GameSaveViewModel(GameSave gameSave)
         {
-            _gameSave = gameSave;
-            _playerViewModel = new PlayerViewModel(gameSave.Player);
-            _boardViewModel = new BoardViewModel(gameSave.Board);
+            Name = gameSave.Name;
+            Player = new PlayerViewModel(gameSave.Player);
+            Board = new BoardViewModel(gameSave.Board);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,34 +12,22 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TileConfigViewModel :ViewModelBase
+    public class TileConfigViewModel : ObservableObject
     {
+        [ObservableProperty]
         private ObservableDictionary<TileType, BaseTileConfigViewModel> _baseGeneration;
+        [ObservableProperty]
         private ObservableDictionary<TileType, ForegroundTileConfigViewModel> _foregroundGeneration;
         public ObservableDictionary<TileType, BaseTileConfigViewModel> BaseGeneration
         {
-            get { return _baseGeneration; }
-            set
-            {
-                if (_baseGeneration != value)
-                {
-                    _baseGeneration = value;
-                    OnPropertyChanged(nameof(BaseGeneration));
-                }
-            }
+            get => _baseGeneration;
+            set => SetProperty(ref _baseGeneration, value);
         }
 
         public ObservableDictionary<TileType, ForegroundTileConfigViewModel> ForegroundGeneration
         {
-            get { return _foregroundGeneration; }
-            set
-            {
-                if (_foregroundGeneration != value)
-                {
-                    _foregroundGeneration = value;
-                    OnPropertyChanged(nameof(ForegroundGeneration));
-                }
-            }
+            get => _foregroundGeneration;
+            set => SetProperty(ref _foregroundGeneration, value);
         }
 
         public TileConfigViewModel(TileConfig config)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,40 +9,26 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TickConfigViewModel : ViewModelBase
+    public class TickConfigViewModel : ObservableObject
     {
-        private TickConfig _tickConfig;
+        [ObservableProperty]
         private int _interval;
+        [ObservableProperty]
         private int _maxtransform;
         public int Interval
         {
-            get { return _interval; }
-            set
-            {
-                if (_interval != value)
-                {
-                    _interval = value;
-                    OnPropertyChanged(nameof(Interval));
-                }
-            }
+            get => _interval;
+            set=> SetProperty(ref _interval, value);
         }
         public int MaxTransform
         {
-            get { return _maxtransform; }
-            set
-            {
-                if( _maxtransform != value)
-                {
-                    _maxtransform = value;
-                    OnPropertyChanged(nameof(MaxTransform));
-                }
-            }
+            get => _maxtransform;
+            set => SetProperty(ref _maxtransform, value);
         }
         public TickConfigViewModel(TickConfig tickConfig)
         {
-            _tickConfig = tickConfig;
-            Interval = _tickConfig.Interval;
-            MaxTransform = _tickConfig.MaxTransform;
+            Interval = tickConfig.Interval;
+            MaxTransform = tickConfig.MaxTransform;
         }
         public TickConfig ToTickConfig()
         {

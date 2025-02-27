@@ -24,22 +24,16 @@ namespace TileGame
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window,INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        private ViewModelBase _viewmodel;
+        private object _viewmodel;
         private NavigationService _navigationService;
-        public ViewModelBase ViewModel
+        public object ViewModel
         {
             get { return _viewmodel; }
             set
             {
                 _viewmodel = value;
-                OnPropertyChanged(nameof(ViewModel));
             }
         }
         public MainWindow()

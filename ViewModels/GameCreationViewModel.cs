@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -14,28 +15,22 @@ using TileGame.Views;
 
 namespace TileGame.ViewModels
 {
-    public class GameCreationViewModel : ViewModelBase
+    public class GameCreationViewModel : ObservableObject
     {
         private readonly INavigationService _navigationService;
+        [ObservableProperty]
         private ConfigViewModel _config;
+        [ObservableProperty]
         private string _worldName;
         public string WorldName
         {
-            get { return _worldName; }
-            set
-            {
-                _worldName = value;
-                OnPropertyChanged(nameof(WorldName));
-            }
+            get=> _worldName;
+            set=> SetProperty(ref _worldName, value);
         }
         public ConfigViewModel Config
         {
-            get { return _config; }
-            set
-            {
-                _config = value;
-                OnPropertyChanged(nameof(Config));
-            }
+            get => _config;
+            set => SetProperty(ref _config, value);
         }
         public GameCreationViewModel(ConfigViewModel config)
         {

@@ -20,7 +20,7 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ItemsControl ItemsSource="{Binding Player.Inventory.Items}" Panel.ZIndex="1">
+            <ItemsControl ItemsSource="{Binding PlayerInventory.Items,UpdateSourceTrigger=PropertyChanged}" Panel.ZIndex="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" Width="1920">

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,33 +18,24 @@ using TileGame.Models;
 using TileGame.Services;
 namespace TileGame.ViewModels
 {
-    public class GameViewModel : ViewModelBase
+    public class GameViewModel : ObservableObject
     {
+        [ObservableProperty]
         private BoardViewModel _board;
         private readonly DispatcherTimer _timer = new DispatcherTimer();
+        [ObservableProperty]
         private PlayerViewModel _player;
         public PlayerViewModel PlayerViewModel
         {
-            get => _player;
-            set
-            {
-                if(_player != value)
-                {
-                    _player = value;
-                    OnPropertyChanged(nameof(PlayerViewModel));
-                }
-            }
+            get=> _player;
+            set=> SetProperty(ref _player, value);
         }
         public ICommand TileClick { get; }
         public Config Config { get; }
         public BoardViewModel BoardViewModel
         {
-            get { return _board; }
-            set
-            {
-                _board = value;
-                OnPropertyChanged(nameof(BoardViewModel));
-            }
+            get => _board;
+            set => SetProperty(ref _board, value);
         }
         private void BoardTileClicked(TileViewModel tile)
         {

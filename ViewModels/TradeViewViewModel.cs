@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -9,33 +10,27 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class TradeViewViewModel : ViewModelBase
+    [ObservableObject]
+    public class TradeViewViewModel : ObservableObject
     {
-        private PlayerViewModel _player;
         public ObservableCollection<TradeViewModel> Trades { get; set; } = new ObservableCollection<TradeViewModel>();
-        public PlayerViewModel Player
+        [ObservableProperty]
+        private InventoryViewModel _playerInventory;
+        public InventoryViewModel PlayerInventory
         {
-            get => _player;
-            set
-            {
-                if (_player != value)
-                {
-                    _player = value;
-                    Debug.WriteLine("setting...");
-                    OnPropertyChanged(nameof(Player));
-                }
-            }
+            get => _playerInventory;
+            set => SetProperty(ref _playerInventory, value);
         }
         public RelayCommand<TradeViewModel> TradeCommand { get; }
         public TradeViewViewModel()
         {
-            _player = new PlayerViewModel(new Player());
+            _playerInventory = new InventoryViewModel(new Inventory());
             TradeCommand = new RelayCommand<TradeViewModel>(Trade,CanTrade);
             GenerateTrades();
         }
         public TradeViewViewModel(PlayerViewModel player)
         {
-            _player = player;
+            _playerInventory = player.Inventory;
             TradeCommand = new RelayCommand<TradeViewModel>(Trade,CanTrade);
             GenerateTrades();
         }
@@ -49,12 +44,22 @@ namespace TileGame.ViewModels
         private void Trade(TradeViewModel trade)
         {
             if (trade == null) return;
-            if (Player.Inventory.Items.ContainsKey(trade.TradeOut.Key))
-                Player.Inventory.Items[trade.TradeOut.Key].Count = Player.Inventory.Items[trade.TradeOut.Key].Count - trade.TradeOut.Value;
-            if (Player.Inventory.Items.ContainsKey(trade.TradeIn.Key))
-                Player.Inventory.Items[trade.TradeIn.Key].Count = Player.Inventory.Items[trade.TradeIn.Key].Count - trade.TradeIn.Value;
-            Debug.WriteLine($"{trade.TradeOut.Key}: {Player.Inventory.Items[trade.TradeOut.Key].Count}");
-            Debug.WriteLine($"{trade.TradeIn.Key}: {Player.Inventory.Items[trade.TradeIn.Key].Count}");
+
+            var items = PlayerInventory.Items;
+
+            if (items.TryGetValue(trade.TradeOut.Key, out var tradeOutItem))
+            {
+                tradeOutItem.Count -= trade.TradeOut.Value;
+                OnPropertyChanged(nameof(trade.TradeOut.Key));
+            }
+
+            if (items.TryGetValue(trade.TradeIn.Key, out var tradeInItem))
+            {
+                tradeInItem.Count += trade.TradeIn.Value;
+            }
+            Debug.WriteLine($"{trade.TradeOut.Key}: {tradeOutItem?.Count}");
+            Debug.WriteLine($"{trade.TradeIn.Key}: {tradeInItem?.Count}");
+
             TradeCommand.RaiseCanExecuteChanged();
         }
         private void GenerateTrades()

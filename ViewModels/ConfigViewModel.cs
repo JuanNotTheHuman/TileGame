@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -10,62 +11,35 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class ConfigViewModel : ViewModelBase
+    public class ConfigViewModel : ObservableObject
     {
         public ICommand RandomizeSeed { get; }
+        [ObservableProperty]
         private int _seed;
-        private Config _config;
+        [ObservableProperty]
         private TickConfigViewModel _tickConfig;
+        [ObservableProperty]
         private TileConfigViewModel _tileConfig;
-        public Config Config
-        {
-            get
-            {
-                return _config;
-            }
-        }
         public TickConfigViewModel Tick
         {
             get => _tickConfig;
-            set
-            {
-                if (_tickConfig != value)
-                {
-                    _tickConfig = value;
-                    OnPropertyChanged(nameof(Tick));
-                }
-            }
+            set=> SetProperty(ref _tickConfig, value);
         }
         public TileConfigViewModel Tiles
         {
             get => _tileConfig;
-            set
-            {
-                if (_tileConfig != value)
-                {
-                    _tileConfig = value;
-                    OnPropertyChanged(nameof(Tiles));
-                }
-            }
+            set => SetProperty(ref _tileConfig, value);
         }
         public int Seed
         {
             get => _seed;
-            set
-            {
-                if (_seed != value)
-                {
-                    _seed = value;
-                    OnPropertyChanged(nameof(Seed));
-                }
-            }
+            set => SetProperty(ref _seed, value);
         }
         public ConfigViewModel(Config config)
         {
-            _config = config;
-            Seed = _config.Seed;
-            Tick = new TickConfigViewModel(_config.Tick);
-            Tiles = new TileConfigViewModel(_config.Tiles);
+            Seed = config.Seed;
+            Tick = new TickConfigViewModel(config.Tick);
+            Tiles = new TileConfigViewModel(config.Tiles);
             RandomizeSeed = new RelayCommand<object>(GetRandomSeed);
         }
         private void GetRandomSeed(object source=null)

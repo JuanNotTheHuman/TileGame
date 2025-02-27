@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,25 +10,17 @@ using TileGame.Models;
 
 namespace TileGame.ViewModels
 {
-    public class PlayerViewModel : ViewModelBase
+    public class PlayerViewModel : ObservableObject
     {
-        private Player Player { get; }
+        [ObservableProperty]
         private InventoryViewModel _inventory;
         public InventoryViewModel Inventory
         {
             get => _inventory;
-            set
-            {
-                if (_inventory != value)
-                {
-                    _inventory = value;
-                    OnPropertyChanged(nameof(Inventory));
-                }
-            }
+            set => SetProperty(ref _inventory, value);
         }
         public PlayerViewModel(Player player)
         {
-            Player = player;
             Inventory = new InventoryViewModel(player.Inventory);
         }
         public Player ToPlayer()
