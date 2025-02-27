@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TileGame.Models;
 using TileGame.ViewModels;
 
 namespace TileGame.Views
@@ -24,7 +25,7 @@ namespace TileGame.Views
         public TradeView()
         {
             InitializeComponent();
-            DataContext = new TradeViewViewModel();
+            DataContext = new TradeViewViewModel(new Player());
             (App.Current.MainWindow as MainWindow).ViewModel = DataContext as TradeViewViewModel;
         }
         public TradeView(PlayerViewModel player)

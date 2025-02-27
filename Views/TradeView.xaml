@@ -20,7 +20,7 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ItemsControl ItemsSource="{Binding PlayerInventory.Items,UpdateSourceTrigger=PropertyChanged}" Panel.ZIndex="1">
+            <ItemsControl ItemsSource="{Binding PlayerViewModel.Inventory.Items}" Panel.ZIndex="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" Width="1920">
@@ -48,7 +48,7 @@
             <ItemsControl ItemsSource="{Binding Trades}" Grid.Row="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

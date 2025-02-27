@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Input;
+using TileGame.ViewModels;
 
 namespace TileGame
 {
@@ -8,6 +8,7 @@ namespace TileGame
     {
         private readonly Action<T> _execute;
         private readonly Func<T, bool> _canExecute;
+
         public event EventHandler CanExecuteChanged;
 
         public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
@@ -16,26 +17,28 @@ namespace TileGame
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter=null)
+        public bool CanExecute(object parameter)
         {
-            bool result = false;
-            if(parameter == null)
+            if (_canExecute == null)
+                return true;
+
+            if (parameter == null && default(T) == null)
+                return _canExecute(default);
+
+            return parameter is T typedParameter && _canExecute(typedParameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            if (parameter == null && default(T) == null)
             {
-                result = _canExecute == null || _canExecute(default);
+                _execute(default);
             }
             else if (parameter is T typedParameter)
             {
-                result = _canExecute == null || _canExecute(typedParameter);
-
-            }
-            return result;
-        }
-        public void Execute(object parameter)
-        {
-            if (parameter is T typedParameter)
                 _execute(typedParameter);
+            }
         }
-
         public void RaiseCanExecuteChanged()
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);

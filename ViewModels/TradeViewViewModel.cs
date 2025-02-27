@@ -2,86 +2,81 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Lifetime;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using TileGame.Enums;
+using TileGame.Helpers;
 using TileGame.Models;
-
+using TileGame.Services;
 namespace TileGame.ViewModels
 {
-    [ObservableObject]
     public class TradeViewViewModel : ObservableObject
     {
-        public ObservableCollection<TradeViewModel> Trades { get; set; } = new ObservableCollection<TradeViewModel>();
         [ObservableProperty]
-        private InventoryViewModel _playerInventory;
-        public InventoryViewModel PlayerInventory
+        private PlayerViewModel _player;
+        private ObservableCollection<TradeViewModel> _trades;
+        public PlayerViewModel PlayerViewModel
         {
-            get => _playerInventory;
-            set => SetProperty(ref _playerInventory, value);
+            get => _player;
+            set
+            {
+                Debug.WriteLine("Setting...");
+                SetProperty(ref _player, value);
+            }
         }
-        public RelayCommand<TradeViewModel> TradeCommand { get; }
-        public TradeViewViewModel()
+        public ObservableCollection<TradeViewModel> Trades
         {
-            _playerInventory = new InventoryViewModel(new Inventory());
-            TradeCommand = new RelayCommand<TradeViewModel>(Trade,CanTrade);
+            get => _trades;
+            set => SetProperty(ref _trades, value);
+        }
+        public ICommand TradeCommand { get; }
+        public TradeViewViewModel(Player player)
+        {
+            PlayerViewModel = new PlayerViewModel(player);
+            Trades = new ObservableCollection<TradeViewModel>();
+            TradeCommand = new RelayCommand<TradeViewModel>(Trade);
             GenerateTrades();
         }
         public TradeViewViewModel(PlayerViewModel player)
         {
-            _playerInventory = player.Inventory;
-            TradeCommand = new RelayCommand<TradeViewModel>(Trade,CanTrade);
+            PlayerViewModel = player;
+            Trades = new ObservableCollection<TradeViewModel>();
+            TradeCommand = new RelayCommand<TradeViewModel>(Trade);
             GenerateTrades();
         }
-        private bool CanTrade(TradeViewModel tvm)
+        public TradeViewViewModel()
         {
-            return true; // for testing
-            //return tvm != null
-            //    && Player.Inventory.Items.ContainsKey(tvm.TradeOut.Key)
-            //    && Player.Inventory.Items[tvm.TradeOut.Key].Count >= tvm.TradeOut.Value;
+            PlayerViewModel = new PlayerViewModel(new Player());
+            Trades = new ObservableCollection<TradeViewModel>();
+            TradeCommand = new RelayCommand<TradeViewModel>(Trade);
+            GenerateTrades();
         }
-        private void Trade(TradeViewModel trade)
+        public void Trade(TradeViewModel trade)
         {
-            if (trade == null) return;
-
-            var items = PlayerInventory.Items;
-
-            if (items.TryGetValue(trade.TradeOut.Key, out var tradeOutItem))
-            {
-                tradeOutItem.Count -= trade.TradeOut.Value;
-                OnPropertyChanged(nameof(trade.TradeOut.Key));
-            }
-
-            if (items.TryGetValue(trade.TradeIn.Key, out var tradeInItem))
-            {
-                tradeInItem.Count += trade.TradeIn.Value;
-            }
-            Debug.WriteLine($"{trade.TradeOut.Key}: {tradeOutItem?.Count}");
-            Debug.WriteLine($"{trade.TradeIn.Key}: {tradeInItem?.Count}");
-
-            TradeCommand.RaiseCanExecuteChanged();
+            PlayerViewModel.Inventory.Items[trade.TradeOut.Key].Count -= trade.TradeOut.Value;
+            PlayerViewModel.Inventory.Items[trade.TradeIn.Key].Count += trade.TradeIn.Value;
+            Debug.WriteLine($"Trade: {trade.TradeOut.Key} {trade.TradeOut.Value} for {trade.TradeIn.Key} {trade.TradeIn.Value}");
         }
         private void GenerateTrades()
         {
+            Trades = new ObservableCollection<TradeViewModel>();
             var random = new Random();
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 5; i++)
             {
-                var tradeIn = new KeyValuePair<ItemType, int>(
-                    (ItemType)random.Next(Enum.GetNames(typeof(ItemType)).Length),
-                    random.Next(1, 5)
-                );
-
-                var validTradeOutItems = ((int[])Enum.GetValues(typeof(ItemType))).Where(r => r != (int)tradeIn.Key).ToList();
-                if (!validTradeOutItems.Any()) continue;
-
-                var tradeOut = new KeyValuePair<ItemType, int>(
-                    (ItemType)validTradeOutItems[random.Next(validTradeOutItems.Count)],
-                    random.Next(1, 5)
-                );
-
-                var trade = new TradeViewModel(new Trade(tradeOut, tradeIn));
-                Trades.Add(trade);
+                var tradeInKey = (ItemType)random.Next(Enum.GetValues(typeof(ItemType)).Length);
+                var tradeIn = new KeyValuePair<ItemType, int>(tradeInKey,random.Next(1,6));
+                var x = Enum.GetValues(typeof(ItemType)).Cast<ItemType>().Where(r => r != tradeInKey);
+                var tradeOutKey = x.ElementAt(random.Next(x.Count()));
+                var tradeOut = new KeyValuePair<ItemType, int>(tradeOutKey, random.Next(1, 6));
+                Trades.Add(new TradeViewModel(new Trade(tradeOut, tradeIn)));
             }
         }
     }

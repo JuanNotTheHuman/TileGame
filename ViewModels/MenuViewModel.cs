@@ -2,9 +2,10 @@
 using TileGame.Views;
 using TileGame;
 using TileGame.Services;
+using System.Diagnostics;
 namespace TileGame.ViewModels
 {
-    public class MenuViewModel : ViewModelBase
+    public class MenuViewModel
     {
         private readonly INavigationService _navigationService;
 
@@ -16,14 +17,16 @@ namespace TileGame.ViewModels
             _navigationService = navigationService;
             StartNewGameCommand = new RelayCommand<object>(CreateGame);
             ContinueGameCommand = new RelayCommand<object>(ContinueGame);
+            Debug.WriteLine("Initialized MenuViewModel");
         }
-
         private void CreateGame(object obj)
         {
+            Debug.WriteLine("A");
             _navigationService.NavigateToPage(new GameCreationView());
         }
         private void ContinueGame(object source = null)
         {
+            Debug.WriteLine("B");
             _navigationService.NavigateToPage(new GameSavesView());
         }
         public MenuViewModel()
@@ -33,6 +36,7 @@ namespace TileGame.ViewModels
                 _navigationService = new NavigationService(mainWindow.MainFrame);
             }
             StartNewGameCommand = new RelayCommand<object>(CreateGame);
+            ContinueGameCommand = new RelayCommand<object>(ContinueGame);
         }
 
     }
