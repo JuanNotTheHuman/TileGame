@@ -43,6 +43,7 @@ namespace TileGame.ViewModels
             PlayerViewModel = new PlayerViewModel(player);
             Trades = new ObservableCollection<TradeViewModel>();
             TradeCommand = new RelayCommand<TradeViewModel>(Trade);
+            Debug.WriteLine("Generating trades...");
             GenerateTrades();
         }
         public TradeViewViewModel(PlayerViewModel player)
@@ -61,10 +62,16 @@ namespace TileGame.ViewModels
         }
         public void Trade(TradeViewModel trade)
         {
-            PlayerViewModel.Inventory.Items[trade.TradeOut.Key].Count -= trade.TradeOut.Value;
-            PlayerViewModel.Inventory.Items[trade.TradeIn.Key].Count += trade.TradeIn.Value;
+            var tradeOutItem = PlayerViewModel.Inventory.Items[trade.TradeOut.Key];
+            var tradeInItem = PlayerViewModel.Inventory.Items[trade.TradeIn.Key];
+
+            tradeOutItem.Count -= trade.TradeOut.Value;
+            tradeInItem.Count += trade.TradeIn.Value;
+            PlayerViewModel.Inventory.Items.TryUpdate(trade.TradeOut.Key, tradeOutItem);
+            PlayerViewModel.Inventory.Items.TryUpdate(trade.TradeIn.Key, tradeInItem);
             Debug.WriteLine($"Trade: {trade.TradeOut.Key} {trade.TradeOut.Value} for {trade.TradeIn.Key} {trade.TradeIn.Value}");
         }
+
         private void GenerateTrades()
         {
             Trades = new ObservableCollection<TradeViewModel>();

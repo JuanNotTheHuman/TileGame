@@ -25,7 +25,7 @@ namespace TileGame.Views
         public TradeView()
         {
             InitializeComponent();
-            DataContext = new TradeViewViewModel(new Player());
+            DataContext = new TradeViewViewModel();
             (App.Current.MainWindow as MainWindow).ViewModel = DataContext as TradeViewViewModel;
         }
         public TradeView(PlayerViewModel player)

@@ -41,7 +41,7 @@ namespace TileGame
             InitializeComponent();
             _navigationService = new NavigationService(MainFrame);
             Closing += MainWindow_Closing;
-            _navigationService.NavigateToPage(new TradeView());
+            _navigationService.NavigateToPage(new MenuView());
         }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {

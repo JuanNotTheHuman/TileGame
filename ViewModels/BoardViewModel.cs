@@ -18,7 +18,7 @@ namespace TileGame.ViewModels
     public class BoardViewModel : ObservableObject
     {
         public int Seed;
-        private Random _random;
+        private readonly Random _random;
         private readonly DispatcherTimer _timer = new DispatcherTimer();
         [ObservableProperty]
         private int _score;
@@ -118,6 +118,5 @@ namespace TileGame.ViewModels
         {
             return new Board(Board.Config, new ObservableCollection<Tile>(Tiles.Select(tvm => tvm.ToTile())));
         }
-
     }
 }
